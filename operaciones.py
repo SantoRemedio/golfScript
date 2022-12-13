@@ -7,12 +7,12 @@
 # Los string del fuente se representan internamente con cremillas
 # incluidas.
 
-from tipos import Block, String, Integer, Var, List, cero, uno
+from tipos import Block, String, Integer, Var, List, cero, uno, menos_uno
 
 uno = Integer(1)
 
 def evaluate(source):
-    pass
+    raise ValueError("Función no importa correctamente la función evaluate")
 
 def gs_coerce(a, b):
     mayor = max(a.precedence, b.precedence)
@@ -78,6 +78,15 @@ def gs_multiply(stack):
     elif isinstance(top, String) and isinstance(sig, String):
         nvo = top.name.join(sig.name)
         stack.append(String(nvo))
+    elif isinstance(top, Block) and isinstance(sig, List):
+        stack.extend(sig.name)
+        for _ in range(len(sig.name) - 1):  # Aplicar el bloque n - 1 veces
+            evaluate(top)
+    elif isinstance(top, Block) and isinstance(sig, String):
+        for letra in sig.name:
+            stack.append(Integer(ord(letra)))
+        for _ in range(len(sig.name) - 1):
+            evaluate(top)
 
 
 def gs_div(stack):
@@ -89,8 +98,15 @@ def gs_div(stack):
 def gs_power(stack):
     a = stack.pop()
     b = stack.pop()
-    power = b ** a
-    stack.append(power)
+    if isinstance(a, Integer) and isinstance(b, Integer):
+        power = b ** a
+        stack.append(power)
+    elif isinstance(a, List):
+        try:
+            index = a.name.index(b)
+            stack.append(Integer(index))
+        except ValueError:
+            stack.append(menos_uno)
 
 def gs_dec_1(stack):
     elemento = stack.pop()
@@ -103,6 +119,9 @@ def gs_dec_1(stack):
         valor_byte = ord(elemento.pop(0))
         stack.append(elemento)
         stack.append(str(valor_byte))
+    elif isinstance(elemento, List):
+        stack.append(List(elemento.name[1:]))
+        stack.append(elemento.name[0])
     else:
         raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
 
@@ -117,6 +136,9 @@ def gs_inc_1(stack):
         valor_byte = ord(contenido[-1])
         stack.append(String(contenido[:-1]))
         stack.append(Integer(valor_byte))
+    elif isinstance(elemento, List):
+        stack.append(List(elemento.name[:-1]))
+        stack.append(elemento.name[-1])
     else:
         raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
 
@@ -187,6 +209,121 @@ def gs_repr(stack):
     a =  String(str(stack.pop()))
     stack.append(a)
 
+def gs_greater(stack):
+    top = stack.pop()
+    sig = stack.pop()
+    if type(top) == type(sig):
+        stack.append(uno if sig > top else cero)
+    elif isinstance(top, Integer) and isinstance(sig, String):
+        st = String(sig.name[int(top):])
+        stack.append(st)
+    elif isinstance(top, Integer) and isinstance(sig, List):
+        lista = List(sig.name[int(top):])
+        stack.append(lista)
+    elif isinstance(top, Integer) and isinstance(sig, Block):
+        from compiler import tokenizador
+        source = str(sig)[1:-1][int(top):]
+        for elemento in tokenizador('{' + source + '}'):
+            stack.append(elemento)
+
+def gs_less(stack):
+    top = stack.pop()
+    sig = stack.pop()
+    if type(top) == type(sig):
+        stack.append(uno if sig < top else cero)
+    elif isinstance(top, Integer) and isinstance(sig, String):
+        st = String(sig.name[:int(top)])
+        stack.append(st)
+    elif isinstance(top, Integer) and isinstance(sig, List):
+        lista = List(sig.name[:int(top)])
+        stack.append(lista)
+    elif isinstance(top, Integer) and isinstance(sig, Block):
+        from compiler import tokenizador
+        source = str(sig)[1:-1][:int(top)]
+        for elemento in tokenizador('{' + source + '}'):
+            stack.append(elemento)
+
+def gs_bitwise_xor(stack):
+    top = stack.pop()
+    sig = stack.pop()
+    if type(top) == type(sig):
+        elemento = top ^ sig
+        stack.append(elemento)
+
+
+def gs_bitwise_and(stack):
+    top = stack.pop()
+    sig = stack.pop()
+    if type(top) == type(sig):
+        elemento = top & sig
+        stack.append(elemento)
+
+def gs_if(stack):
+    #
+    #     valor_if valor_true valor_false if
+    #
+    valor_false = stack.pop()
+    valor_true = stack.pop()
+    valor_if = stack.pop()
+
+    if valor_if:
+        evaluate(valor_true)
+    else:
+        evaluate(valor_false)
+
+def gs_do(stack):
+    #
+    #   elemento bloque do
+    #
+    # Ejecuta el bloque, saca tope del stack; si
+    # es true, sigue.
+    from compiler import evaluate
+    bloque = stack.pop()
+    while True:
+        evaluate(bloque)
+        valor_if = stack.pop()
+        if not valor_if:
+            break
+
+def gs_while(stack):
+    #
+    #   elemento bloque-ejecutar bloque-condicion while
+    #
+    # Ejecuta el bloque-condicion y saca un valor del stack.
+    # Si es True, ejecuta el bloque-ejecutar.
+    # Si es False, reinserta valor y termina
+    from compiler import evaluate
+    bloque_condicion = stack.pop()
+    bloque_ejecutar = stack.pop()
+    while True:
+        evaluate(bloque_condicion)
+        valor_if = stack.pop()
+        if valor_if:
+            evaluate(bloque_ejecutar)
+        else:
+            stack.append(valor_if)
+            break
+
+def gs_until(stack):
+    #
+    #   elemento bloque-ejecutar bloque-condicion until
+    #
+    # Ejecuta el bloque-condicion y saca un valor del stack.
+    # Si es True, ejecuta el bloque-ejecutar.
+    # Si es False, reinserta valor y termina
+    from compiler import evaluate
+    bloque_condicion = stack.pop()
+    bloque_ejecutar = stack.pop()
+    while True:
+        evaluate(bloque_condicion)
+        valor_if = stack.pop()
+        if valor_if:
+            stack.append(valor_if)
+            break
+        else:
+            evaluate(bloque_ejecutar)
+
+
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
 variables = {
@@ -207,5 +344,12 @@ variables = {
     Var('%'): gs_module,
     Var('!'): gs_not,
     Var('`'): gs_repr,
+    Var('>'): gs_greater,
+    Var('^'): gs_bitwise_xor,
+    Var('&'): gs_bitwise_and,
+    Var('if'): gs_if,
+    Var('do'): gs_do,
+    Var('while'): gs_while,
+    Var('until'): gs_until,
 }
 

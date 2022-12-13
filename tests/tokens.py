@@ -3,7 +3,7 @@
 #
 import unittest
 from compiler import reset, tokenizador, lexer
-from tipos import Var, List, String
+from tipos import Var, List, String, Block, Integer
 
 class TestBasico(unittest.TestCase):
     def test_parse(self):
@@ -113,3 +113,32 @@ class TestBasico(unittest.TestCase):
         source = "1 -1"
         resultado = List([x for x in tokenizador(source)])
         self.assertEqual('[1 -1]', str(resultado))
+
+    def test_block(self):
+        reset()
+        source = "{abcd  efg}"
+        resultado = List([x for x in tokenizador(source)])
+        b = Block(resultado)
+        self.assertEqual('[1 -1]', str(resultado))
+
+    def test_xor_string(self):
+        reset()
+        a = String("abcdef")
+        b = String("a112")
+        c = a ^ b
+        self.assertEqual('"bcdef12"', str(c))
+
+    def test_xor_List(self):
+        reset()
+        a = List(['a', 'b', 'c'])
+        b = List(['a', 1, 2])
+        c = a ^ b
+        self.assertEqual('"bcdef12"', str(c))
+
+    def test_and_List(self):
+        reset()
+        a = List([String('a'), String('b'), String('c')])
+        b = List([String('a'), Integer(1), Integer(2)])
+        c = a & b
+        self.assertEqual('["a"]', str(c))
+

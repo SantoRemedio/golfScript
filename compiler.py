@@ -8,68 +8,11 @@ import typing
 patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
                     #|"(?:\\.|[^"])*"?|-?[0-9]+|)
 
-
-def lexer(source):
-    #   Divide el programa fuente en lexemas
-    #   Funcion generadora; marca de fin es None
-    for linea in source.split('\n'):
-        for parte in patron.findall(linea):
-            if parte[0] == "#":  # El resto es comentario
-                continue
-            elif parte[0] == "'":
-                word = String(parte[1:-1])
-            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
-                word = Integer(int(parte))
-            elif parte[0] not in '[]{}':
-                word = Var(parte)
-                if word not in variables:
-                    variables[word] = None
-            else:
-                #   Algunos lexemas se entregan como texto, ya
-                #   que son entidades complejas.
-                #   Incluyen los []{}
-                word = parte
-
-            yield word
-    yield None
-
-def tokenizador(pgma):
-    #  Recibe las partes elementales del pgma y los
-    #  convierte a los tipos adecuados
-
-    stack_listas = []
-    source = lexer(pgma)
-    lexema = next(source)
-    while lexema is not None:
-        # Examina un lexema e intenta convertirlo en
-        # un token.
-        token = None
-
-        if lexema == '{':
-            block = []
-            lexema = next(source)
-            while lexema != '}':
-                block.append(lexema)
-                lexema = next(source)
-            token = Block(block)
-        elif lexema == '[':
-            stack_listas.append([])
-        elif lexema == ']':
-            if len(stack_listas) == 1:
-                token = List(stack_listas.pop())
-            else:
-                sublista = stack_listas.pop()
-                stack_listas[-1].append(List(sublista))
-        elif stack_listas:
-            stack_listas[-1].append(lexema)
-        else:
-            token = lexema
-
-        if token is not None:
-            yield token
-        lexema = next(source)
-
-
+#
+# El stack del script.
+# El tope del stack está a la derecha (indice mayor).
+# En todas las representaciones del stack, el tope estará a la derecha
+#
 stack = List([])
 
 def evaluate(source_code):
@@ -112,6 +55,79 @@ def evaluate(source_code):
                 print(source_code)
                 print(elemento.__hash__())
     return stack
+
+def lexer(source):
+    #   Divide el programa fuente en lexemas
+    #   Funcion generadora; marca de fin es None
+    for linea in source.split('\n'):
+        for parte in patron.findall(linea):
+            if parte[0] == "#":  # El resto es comentario
+                continue
+            elif parte[0] == "'":
+                word = String(parte[1:-1])
+            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
+                word = Integer(int(parte))
+            elif parte[0] not in '[]{}':
+                word = Var(parte)
+                if word not in variables:
+                    variables[word] = None
+            else:
+                #   Algunos lexemas se entregan como texto, ya
+                #   que son entidades complejas.
+                #   Incluyen los []{}
+                word = parte
+
+            yield word
+    yield None
+
+def tokenizador(pgma):
+    #  Recibe las partes elementales del pgma y los
+    #  convierte a los tipos adecuados
+
+    stack_listas = []
+    source = lexer(pgma)
+    word = next(source)
+    while word is not None:
+        # Examina un word e intenta convertirlo en
+        # un token.
+        token = None
+
+        if word == '{':
+            #   Comienza un bloque;
+            #   Bloque se lee completo aquí
+            block = []
+            word = next(source)
+            while word != '}':
+                block.append(word)
+                word = next(source)
+            token = Block(block)
+        elif word == '[':
+            #   Comienza una nueva lista, posiblemente anidad
+            #   Partimos con una lista vacia agregada en el stack
+            stack_listas.append([])
+        elif word == ']':
+            #   Se termino la lista, que quedó al tope del stack
+            if len(stack_listas) == 1:
+                #   Esta es una lista de primer nivel.
+                token = List(stack_listas.pop())
+            else:
+                #   Esta es una sublista.
+                #   Agregarla como elemento en la lista superior.
+                sublista = stack_listas.pop()
+                stack_listas[-1].append(List(sublista))
+        elif stack_listas:
+            #   Si el stack_lista no está vacio, entonces
+            #   estamos leyendo elementos de una lista.
+            stack_listas[-1].append(word)
+        else:
+            #   Fuera de una lista.
+            token = word
+
+        if token is not None:
+            yield token
+        word = next(source)
+
+
 
 def reset():
     global stack

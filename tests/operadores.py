@@ -138,7 +138,7 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "{a}{b}+"
         resultado = evaluate(source)
-        self.assertEqual("[{a, b}]", str(resultado))
+        self.assertEqual("[{a b}]", str(resultado))
 
     def test_not_Integer_1(self):
         reset()
@@ -243,3 +243,129 @@ class TestBasico(unittest.TestCase):
         resultado = evaluate(source)
         self.assertEqual('["a s d f"]', str(resultado))
 
+    def test_mult_list_block(self):
+        reset()
+        source = "[1 2 3 4]{+}*"
+        resultado = evaluate(source)
+        self.assertEqual('[10]', str(resultado))
+
+
+    def test_mult_list_block(self):
+        reset()
+        source = "'asdf'{+}*"
+        resultado = evaluate(source)
+        self.assertEqual('[414]', str(resultado))
+
+    def test_inc_list(self):
+        reset()
+        source = "[1 2 3])"
+        resultado = evaluate(source)
+        self.assertEqual('[[1 2] 3]', str(resultado))
+
+    def test_dec_list(self):
+        reset()
+        source = "[1 2 3]("
+        resultado = evaluate(source)
+        self.assertEqual('[[2 3] 1]', str(resultado))
+
+    def test_power_list(self):
+        reset()
+        source = "4[5 5 4 1 2 3]?"
+        resultado = evaluate(source)
+        self.assertEqual('[2]', str(resultado))
+
+    def test_power_list_s(self):
+        reset()
+        source = "'a' [5 5 'a' 1 2 3]?"
+        resultado = evaluate(source)
+        self.assertEqual('[2]', str(resultado))
+
+    def test_power_list_list(self):
+        reset()
+        source = "[6 7] [5 5 'a' [6 7] 1 2 3]?"
+        resultado = evaluate(source)
+        self.assertEqual('[3]', str(resultado))
+
+    def test_power_list_no(self):
+        reset()
+        source = "[6] [5 5 'a' [6 7] 1 2 3]?"
+        resultado = evaluate(source)
+        self.assertEqual('[-1]', str(resultado))
+
+    def test_greater_int_int(self):
+        reset()
+        source = "1 2>"
+        resultado = evaluate(source)
+        self.assertEqual('[0]', str(resultado))
+
+    def test_greater_int_int2(self):
+        reset()
+        source = "3 2>"
+        resultado = evaluate(source)
+        self.assertEqual('[1]', str(resultado))
+
+    def test_greater_str_str(self):
+        reset()
+        source = "'def' 'abc'>"
+        resultado = evaluate(source)
+        self.assertEqual('[1]', str(resultado))
+
+    def test_greater_str_str2(self):
+        reset()
+        source = "'abc' 'def' >"
+        resultado = evaluate(source)
+        self.assertEqual('[0]', str(resultado))
+
+    def test_greater_list(self):
+        reset()
+        source = "[1 2 3 4 5] 2 >"
+        resultado = evaluate(source)
+        self.assertEqual('[[3 4 5]]', str(resultado))
+
+    def test_greater_list_menos(self):
+        reset()
+        source = "[1 2 3 4 5] -2 >"
+        resultado = evaluate(source)
+        self.assertEqual('[[4 5]]', str(resultado))
+
+    def test_greater_block(self):
+        reset()
+        source = "{abcd} 2 >"
+        resultado = evaluate(source)
+        self.assertEqual('[{cd}]', str(resultado))
+
+    def test_xor_int(self):
+        reset()
+        source = "419 234^"
+        resultado = evaluate(source)
+        self.assertEqual('[329]', str(resultado))
+
+    def test_if(self):
+        reset()
+        source = "1 2 3 if"
+        resultado = evaluate(source)
+        self.assertEqual('[2]', str(resultado))
+
+    def test_if_false(self):
+        reset()
+        source = "0 2 3 if"
+        resultado = evaluate(source)
+        self.assertEqual('[3]', str(resultado))
+
+    def test_do(self):
+        reset()
+        source = "5{1-..}do"
+        resultado = evaluate(source)
+        self.assertEqual('[4 3 2 1 0 0]', str(resultado))
+
+    def test_while(self):
+        reset()
+        source = "5{.}{1-.}while"
+        resultado = evaluate(source)
+        self.assertEqual('[4 3 2 1 0 0]', str(resultado))
+
+    def test_until(self):
+        reset()
+        source = "5{.}{1-.}until"
+        resultado = evaluate(source)
+        self.assertEqual('[5]', str(resultado))

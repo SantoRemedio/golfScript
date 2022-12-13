@@ -85,6 +85,15 @@ class Integer(GS_Type):
         valor = f'"{self.name}"'
         return valor
 
+    def __gt__(self, other):
+        return self.name > other.name
+
+    def __xor__(self, other):
+        return Integer(self.name ^ other.name)
+
+    def __and__(self, other):
+        return Integer(self.name & other.name)
+
 class String(GS_Type):
     def __init__(self, name):
         super().__init__(name)
@@ -108,6 +117,21 @@ class String(GS_Type):
 
     def __bool__(self):
         return self.name != ''
+
+    def __gt__(self, other):
+        return self.name > other.name
+
+    def __xor__(self, other):
+        faltantes = []
+        for letra in other.name:
+            if letra not in self.name and letra not in faltantes:
+                faltantes.append(letra)
+        lista = [letra for letra in self.name if letra not in other.name]
+        return String(''.join(lista + faltantes))
+
+    def __and__(self, other):
+        lista = [letra for letra in self.name if letra in self.other]
+        return String(''.join(lista))
 
 class Block(GS_Type):
     #  Bloques de código como "{..-}"
@@ -197,11 +221,22 @@ class List(GS_Type):
     def __repr__(self):
         return str(self)
 
+    def __xor__(self, other):
+        faltantes = []
+        for elemento in other.name:
+            if elemento not in self.name and elemento not in faltantes:
+                faltantes.append(elemento)
+        lista = [elemento for elemento in self.name if elemento not in other.name]
+        return List(lista + faltantes)
 
+    def __and__(self, other):
+        lista = [elemento for elemento in self.name if elemento in other.name]
+        return List(lista)
 
 
 cero = Var(0)
 uno = Var(1)
+menos_uno = Var(-1)
 colon = Var(':')
 start_block = Var('{')
 end_block = Var('}')
