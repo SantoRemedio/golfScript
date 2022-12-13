@@ -42,7 +42,7 @@ def gs_subtract(stack):
     stack.append(resta)
 
 def gs_multiply(stack):
-    from compiler import evaluar
+    from evaluador import evaluar
     top = stack.pop()
     sig = stack.pop()
 
@@ -139,7 +139,7 @@ def gs_inc_1(stack):
 
 
 def gs_chancho(stack):
-    from compiler import evaluar
+    from evaluador import evaluar
     elemento = stack.pop()
     if isinstance(elemento, Var):
         elemento = variables[elemento]
@@ -216,7 +216,7 @@ def gs_greater(stack):
         lista = List(sig.name[int(top):])
         stack.append(lista)
     elif isinstance(top, Integer) and isinstance(sig, Block):
-        from compiler import tokenizador
+        from evaluador import tokenizador
         source = str(sig)[1:-1][int(top):]
         for elemento in tokenizador('{' + source + '}'):
             stack.append(elemento)
@@ -233,7 +233,7 @@ def gs_less(stack):
         lista = List(sig.name[:int(top)])
         stack.append(lista)
     elif isinstance(top, Integer) and isinstance(sig, Block):
-        from compiler import tokenizador
+        from evaluador import tokenizador
         source = str(sig)[1:-1][:int(top)]
         for elemento in tokenizador('{' + source + '}'):
             stack.append(elemento)
@@ -257,7 +257,7 @@ def gs_if(stack):
     #
     #     valor_if valor_true valor_false if
     #
-    from compiler import evaluar
+    from evaluador import evaluar
     valor_false = stack.pop()
     valor_true = stack.pop()
     valor_if = stack.pop()
@@ -273,7 +273,7 @@ def gs_do(stack):
     #
     # Ejecuta el bloque, saca tope del stack; si
     # es true, sigue.
-    from compiler import evaluar
+    from evaluador import evaluar
 
     bloque = stack.pop()
     while True:
@@ -289,7 +289,7 @@ def gs_while(stack):
     # Ejecuta el bloque-condicion y saca un valor del stack.
     # Si es True, ejecuta el bloque-ejecutar.
     # Si es False, reinserta valor y termina
-    from compiler import evaluar
+    from evaluador import evaluar
 
     bloque_condicion = stack.pop()
     bloque_ejecutar = stack.pop()
@@ -309,7 +309,7 @@ def gs_until(stack):
     # Ejecuta el bloque-condicion y saca un valor del stack.
     # Si es True, ejecuta el bloque-ejecutar.
     # Si es False, reinserta valor y termina
-    from compiler import evaluar
+    from evaluador import evaluar
 
     bloque_condicion = stack.pop()
     bloque_ejecutar = stack.pop()

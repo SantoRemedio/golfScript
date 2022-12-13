@@ -1,3 +1,20 @@
+#
+#   evaluador.py
+#
+#   Este es el módulo principal del interprete.
+
+#   La función evaluar() recibe un programa en código
+#   fuente u otro formato, y lo ejecuta contra un stack
+#   y tabla de valores permanentes, para poder ejecutar
+#   programas en sucesión
+#
+#   Un programa en código fuente es divididoo en un stream
+#   de palabras por la función lexer(). La función tokenizar()
+#   procesa el stream produciendo elementos del lenguaje:
+#   - Integer
+#   - String
+#   - Block
+
 import re
 
 from tipos import Block, Var, Integer, String, List, colon

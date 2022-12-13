@@ -2,7 +2,7 @@
 #   Revisa el correcto parsing del lenguaje.
 #
 import unittest
-from compiler import reset, tokenizador, lexer
+from evaluador import reset, tokenizador, lexer
 from tipos import Var, List, String, Block, Integer
 
 class TestBasico(unittest.TestCase):

@@ -1,5 +1,5 @@
 import sys
-from compiler import evaluar, reset, variables
+from evaluador import evaluar, reset, variables
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
