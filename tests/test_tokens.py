@@ -50,19 +50,19 @@ class TestBasico(unittest.TestCase):
         resultado = [x for x in tokenizar(source)]
         self.assertEqual("[{ab}]", str(resultado))
 
-    def test_lista(self):
+    def test_lista2(self):
         reset()
         source = "[1 2 3]"
         resultado = [x for x in tokenizar(source)]
-        self.assertEqual("[[1, 2, 3]]", str(resultado))
+        self.assertEqual("[[1 2 3]]", str(resultado))
 
-    def test_lista(self):
+    def test_lista3(self):
         reset()
         source = "[1 2 3]~"
         resultado = [x for x in tokenizar(source)]
         self.assertEqual("[[1 2 3], ~]", str(resultado))
 
-    def test_lista2(self):
+    def test_lista1(self):
         reset()
         source = "[1 2 3]~"
         resultado = Array([x for x in lexer(source)])

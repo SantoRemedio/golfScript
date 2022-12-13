@@ -219,7 +219,6 @@ def gs_repr(stack):
     a = String(str(stack.pop()))
     stack.append(a)
 
-
 def gs_greater(stack):
     top = stack.pop()
     sig = stack.pop()

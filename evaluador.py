@@ -100,6 +100,8 @@ def lexer(source):
             if parte[0] == "#":  # El resto es comentario
                 continue
             elif parte[0] == "'":
+                #   Convierte enteros y strings a medida
+                #   que los encuentra.
                 word = String(parte[1:-1])
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
