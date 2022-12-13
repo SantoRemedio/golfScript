@@ -103,7 +103,7 @@ class String(GS_Type):
         return String(self.name + other.name)
 
     def __str__(self):
-        return f"'{self.name}'"
+        return f'"{self.name}"'
 
     def __repr__(self):
         return f"'{self.name}'"

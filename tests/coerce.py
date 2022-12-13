@@ -14,6 +14,12 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "1'2'+"
         resultado = evaluate(source)
-        self.assertEqual("['12']", str(resultado))
+        self.assertEqual('["12"]', str(resultado))
+
+    def test_string(self):
+        reset()
+        source = "'asdf'$"
+        resultado = evaluate(source)
+        self.assertEqual('["adfs"]', str(resultado))
 
 

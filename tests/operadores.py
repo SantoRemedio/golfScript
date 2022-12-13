@@ -13,13 +13,13 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "'a' 'b'+"
         resultado = evaluate(source)
-        self.assertEqual("['ab']", str(resultado))
+        self.assertEqual('["ab"]', str(resultado))
 
     def test_tail(self):
         reset()
         source = "'abc')"
         resultado = evaluate(source)
-        self.assertEqual("['ab' 99]", str(resultado))
+        self.assertEqual('["ab" 99]', str(resultado))
 
     def test_subtract(self):
         reset()
@@ -68,6 +68,13 @@ class TestBasico(unittest.TestCase):
         source = "1 2 3 4 1$"
         resultado = evaluate(source)
         self.assertEqual("[1 2 3 4 3]", str(resultado))
+
+    def test_dup_n_string(self):
+        reset()
+        source = "'asdf'$"
+        resultado = evaluate(source)
+        self.assertEqual('["adfs"]', str(resultado))
+
 
     def test_rotate(self):
         reset()
@@ -167,5 +174,5 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "1`"
         resultado = evaluate(source)
-        self.assertEqual("['1']", str(resultado))
+        self.assertEqual('["1"]', str(resultado))
 

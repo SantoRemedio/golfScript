@@ -16,3 +16,10 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluate(source)
         self.assertEqual("[4]", str(resultado))
+
+    def test_block(self):
+        reset()
+        source = "2 {2*} 5*"
+
+        resultado = evaluate(source)
+        self.assertEqual("[64]", str(resultado))

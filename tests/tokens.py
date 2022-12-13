@@ -95,3 +95,10 @@ class TestBasico(unittest.TestCase):
         reset()
         a = String("abc")
         self.assertEqual("'abc'", str(a))
+
+    def test_str_s(self):
+        reset()
+        source = "'asdf'$"
+        resultado = List([x for x in tokenizador(source)])
+        self.assertEqual("['asdf' $]", str(resultado))
+

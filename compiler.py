@@ -1,7 +1,7 @@
 import re
 
 from tipos import Block, Var, Integer, String, List, colon
-from vars import variables
+from operaciones import variables
 import types
 import typing
 
@@ -68,7 +68,7 @@ def tokenizador(pgma):
         lexema = next(source)
 
 
-stack = List()
+stack = List([])
 
 def evaluate(source_code):
     #   Recibe un código a ejecutar.

@@ -38,10 +38,15 @@ def gs_subtract(stack):
     stack.append(resta)
 
 def gs_multiply(stack):
-    a = stack.pop()
-    b = stack.pop()
-    mul = a * b
-    stack.append(mul)
+    from compiler import evaluate
+    top = stack.pop()
+    sig = stack.pop()
+    if isinstance(top, Integer) and isinstance(sig, Integer):
+        resultado = top * sig
+        stack.append(resultado)
+    elif isinstance(top, Integer) and isinstance(sig, Block):
+        for _ in range(int(top)):
+            evaluate(sig.name)
 
 def gs_div(stack):
     a = stack.pop()
@@ -103,12 +108,17 @@ def gs_chancho(stack):
 def gs_pop(stack):
     if stack:
         stack.pop()
+
 def gs_dup_n(stack):
     #   Duplica en n-esimo elemento del stack (index 0).
     #   n se saca del stack.
-    n = stack.pop()
+    top = stack.pop()
 
-    stack.append(stack[-int(n) - 1])
+    if isinstance(top, Integer):
+        stack.append(stack[-int(top) - 1])
+    elif isinstance(top, String):
+        nvo = String(''.join(sorted(top.name)))
+        stack.append(nvo)
 
 def gs_dup(stack):
     stack.append(stack[-1])
