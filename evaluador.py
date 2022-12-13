@@ -166,6 +166,8 @@ def reset():
     #   ejecución de los tests unitarios.
     #
     global stack
+    global modo_debug
+    
     stack.reset()
     reset_variables()
     modo_debug = False
