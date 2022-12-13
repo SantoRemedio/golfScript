@@ -6,14 +6,17 @@
 
 from tipos import Block, String, Integer, Var, Array, cero, uno, menos_uno
 
+
 def evaluar(source):
-    raise ValueError("Función no importa correctamente la función evaluar")
+    raise ValueError(f"Función no importa correctamente la función evaluar en {source}")
+
 
 def gs_coerce(a, b):
     mayor = max(a.precedence, b.precedence)
     a = a.coerce(mayor)
     b = b.coerce(mayor)
     return a, b
+
 
 def gs_sum(stack):
     a = stack.pop()
@@ -30,6 +33,7 @@ def gs_subtract(stack):
     a = stack.pop()
     b = stack.pop()
     a, b = gs_coerce(a, b)
+
     if isinstance(a, Integer):
         resta = b - a
     elif isinstance(a, Array):
@@ -38,8 +42,11 @@ def gs_subtract(stack):
             if elemento not in a:
                 lista.append(elemento)
         resta = Array(lista)
+    else:
+        raise ValueError("Error en gs_subtract: tipo de dato invalido {type(a)}")
 
     stack.append(resta)
+
 
 def gs_multiply(stack):
     from evaluador import evaluar
@@ -90,6 +97,7 @@ def gs_div(stack):
     div = b // a
     stack.append(div)
 
+
 def gs_power(stack):
     a = stack.pop()
     b = stack.pop()
@@ -102,6 +110,7 @@ def gs_power(stack):
             stack.append(Integer(index))
         except ValueError:
             stack.append(menos_uno)
+
 
 def gs_dec_1(stack):
     elemento = stack.pop()
@@ -119,6 +128,7 @@ def gs_dec_1(stack):
         stack.append(elemento.name[0])
     else:
         raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
+
 
 def gs_inc_1(stack):
     elemento = stack.pop()
@@ -155,9 +165,11 @@ def gs_chancho(stack):
     else:
         raise ValueError(f"Error en gs_chancho: elemento desconocido {elemento}")
 
+
 def gs_pop(stack):
     if stack:
         stack.pop()
+
 
 def gs_dup_n(stack):
     #   Duplica en n-esimo elemento del stack (index 0).
@@ -170,13 +182,14 @@ def gs_dup_n(stack):
         nvo = String(''.join(sorted(top.name)))
         stack.append(nvo)
 
+
 def gs_dup(stack):
     stack.append(stack[-1])
 
+
 def gs_rotate(stack):
     #   Rota los tres elementos al tope del stack
-    #   A B C -> B C A
-    3
+    #   A B C -> B C A 3
     if len(stack) > 2:
         stack[-1], stack[-2], stack[-3] = stack[-3], stack[-1], stack[-2]
     else:
@@ -190,19 +203,22 @@ def gs_swap(stack):
     else:
         raise ValueError("Error en swap")
 
+
 def gs_module(stack):
     a = stack.pop()
     b = stack.pop()
     stack.append(b % a)
 
+
 def gs_not(stack):
     a = stack.pop()
     stack.append(cero if a else uno)
 
+
 def gs_repr(stack):
-    #TODO: cambiar cremillas simples por dobles
-    a =  String(str(stack.pop()))
+    a = String(str(stack.pop()))
     stack.append(a)
+
 
 def gs_greater(stack):
     top = stack.pop()
@@ -221,6 +237,7 @@ def gs_greater(stack):
         for elemento in tokenizar('{' + source + '}'):
             stack.append(elemento)
 
+
 def gs_less(stack):
     top = stack.pop()
     sig = stack.pop()
@@ -238,6 +255,7 @@ def gs_less(stack):
         for elemento in tokenizar('{' + source + '}'):
             stack.append(elemento)
 
+
 def gs_bitwise_xor(stack):
     top = stack.pop()
     sig = stack.pop()
@@ -253,6 +271,7 @@ def gs_bitwise_and(stack):
         elemento = top & sig
         stack.append(elemento)
 
+
 def gs_if(stack):
     #
     #     valor_if valor_true valor_false if
@@ -266,6 +285,7 @@ def gs_if(stack):
         evaluar(valor_true)
     else:
         evaluar(valor_false)
+
 
 def gs_do(stack):
     #
@@ -281,6 +301,7 @@ def gs_do(stack):
         valor_if = stack.pop()
         if not valor_if:
             break
+
 
 def gs_while(stack):
     #
@@ -301,6 +322,7 @@ def gs_while(stack):
         else:
             stack.append(valor_if)
             break
+
 
 def gs_until(stack):
     #
@@ -326,6 +348,7 @@ def gs_until(stack):
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
 variables = {}
+
 
 def reset_variables():
     global variables

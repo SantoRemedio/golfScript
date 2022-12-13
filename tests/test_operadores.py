@@ -369,3 +369,22 @@ class TestBasico(unittest.TestCase):
         source = "5{.}{1-.}until"
         resultado = evaluar(source)
         #self.assertEqual('[5]', str(resultado))
+
+    def test_list_str_sum(self):
+        reset()
+        source = "[50]'23'+"
+        resultado = evaluar(source)
+        self.assertEqual('["223"]', str(resultado))
+
+    def test_array_str(self):
+        reset()
+        source = "[50 'a']'23'+"
+        resultado = evaluar(source)
+        self.assertEqual('["2a23"]', str(resultado))
+
+    def test_array_block(self):
+        reset()
+        source = "[50 'x']{3}+"
+        resultado = evaluar(source)
+        self.assertEqual("[{50 x 3}]", str(resultado))
+        print(resultado)

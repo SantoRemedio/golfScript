@@ -25,7 +25,7 @@ import types
 
 #   Este es el patrón oficial para reconoce golfScript
 patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
-                    #|"(?:\\.|[^"])*"?|-?[0-9]+|)
+# |"(?:\\.|[^"])*"?|-?[0-9]+|)
 
 #
 # El stack del script.
@@ -38,6 +38,7 @@ stack = Array([])
 # en debug se imprime el stack y el elemento por cada elemento en el stream
 #
 modo_debug = False
+
 
 def evaluar(source_code):
     #   Recibe un código a ejecutar:
@@ -56,22 +57,24 @@ def evaluar(source_code):
 
     elemento_prev = None
     for elemento in source:
-        print(stack, elemento)
+        if modo_debug:
+            print(stack, elemento)
+
         #   Un elemento None marca el fin del código.
         #   (se necesita así en otras parts.
         if elemento is None:
             break
 
         try:
-            if elemento == colon: #  1:a  Asigna el valor 1 a la variable a
-                pass    # Esperar lo que viene después
+            if elemento == colon:  # 1:a  Asigna el valor 1 a la variable a
+                pass  # Esperar lo que viene después
             elif elemento in variables:
                 if elemento_prev == colon:
-                    variables[elemento] = stack[-1]    # Extraer valor del stack sin modificarlo
+                    variables[elemento] = stack[-1]  # Extraer valor del stack sin modificarlo
                 elif isinstance(variables[elemento], types.FunctionType):
-                    variables[elemento](stack) # Ejecutar un operador definido por una función
+                    variables[elemento](stack)  # Ejecutar un operador definido por una función
                 elif isinstance(variables[elemento], Block):
-                    evaluar(variables[elemento].name) # Ejecutar el bloque completo.
+                    evaluar(variables[elemento].name)  # Ejecutar el bloque completo.
                 else:
                     #  Colocar en el stack el valor de la variable.
                     stack.append(variables[elemento])
@@ -87,6 +90,7 @@ def evaluar(source_code):
             print(source_code)
             print(elemento.__hash__())
     return stack
+
 
 def lexer(source):
     #   Divide el programa fuente en palabras.
@@ -111,6 +115,7 @@ def lexer(source):
 
             yield word
     yield None
+
 
 def tokenizar(pgma):
     #  Recibe las partes elementales del pgma y los
@@ -157,7 +162,6 @@ def tokenizar(pgma):
         if token is not None:
             yield token
         word = next(source)
-
 
 
 def reset():

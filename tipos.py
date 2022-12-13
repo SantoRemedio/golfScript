@@ -1,13 +1,13 @@
 #
 #   golfScript maneja cuatro tipos de datos:
 #   - Integer
-#   - String
 #   - Array
+#   - String
 #   - Block
 #   que son basicamente wrappers alrededor de los
 #   tipos basicos.
 #
-#   Cada tipo tiene un orden de precedencia, que controla
+#   Cada tipo tiene un orden de precedencia que controla
 #   las conversiones en operaciones que mezclan tipos.
 #   El método coerce(precedencia) convierte tipos.
 #
@@ -16,7 +16,11 @@
 #
 import uuid
 
-class GS_Type:
+#  Debido a la naturaleza del problema, los métodos mágicos resultan
+#  simples considerando que solo interactuan entre si cuatro clases
+#  distintas.
+
+class GSType:
     #   Tipo base, no se usa por si solo.
     def __init__(self, name):
         self.name = name
@@ -29,6 +33,7 @@ class GS_Type:
 
     def __eq__(self, other):
         return self.name == other.name if type(self) == type(other) else False
+
     def __str__(self):
         return str(self.name)
 
@@ -36,9 +41,10 @@ class GS_Type:
         return str(self.name)
 
     def __hash__(self):
-        return hash(self.name);
+        return hash(self.name)
 
-class Var(GS_Type):
+
+class Var(GSType):
     #   Contiene el nombre de una variable.
     #   El nombre de una variable puede ser cualquier
     #   tipo de objeto.
@@ -46,12 +52,13 @@ class Var(GS_Type):
         #   name es el string con el nombre de la variable
         super().__init__(name)
 
-class Integer(GS_Type):
+
+class Integer(GSType):
     # Representa enteros.
     def __init__(self, name):
         #   name es la representación del entero como string
         super().__init__(name)
-        self.precedence = 0;
+        self.precedence = 0
 
     def coerce(self, precedence):
         # convierte este objeto a uno del
@@ -65,6 +72,9 @@ class Integer(GS_Type):
         if precedence == 3:
             return Block([self])
         raise ValueError(f"Error en Integer.coerse: precedencia invalida {precedence}")
+
+    def __str__(self):
+        return str(self.name)
 
     def __add__(self, other):
         suma = self.name + other.name
@@ -108,8 +118,7 @@ class Integer(GS_Type):
         return self.name != 0
 
     def __repr__(self):
-        valor = f'"{self.name}"'
-        return valor
+        return str(self.name)
 
     def __gt__(self, other):
         return self.name > other.name
@@ -120,7 +129,8 @@ class Integer(GS_Type):
     def __and__(self, other):
         return Integer(self.name & other.name)
 
-class String(GS_Type):
+
+class String(GSType):
     def __init__(self, name):
         super().__init__(name)
         self.precedence = 2
@@ -137,7 +147,7 @@ class String(GS_Type):
         return String(self.name + other.name)
 
     def __str__(self):
-        var = self.name.replace('"',  '\\"')
+        var = self.name.replace('"', '\\"')
         return f'"{var}"'
 
     def __repr__(self):
@@ -158,10 +168,11 @@ class String(GS_Type):
         return String(''.join(lista + faltantes))
 
     def __and__(self, other):
-        lista = [letra for letra in self.name if letra in self.other]
+        lista = [letra for letra in self.name if letra in other.name]
         return String(''.join(lista))
 
-class Block(GS_Type):
+
+class Block(GSType):
     #  Bloques de código como "{..-}"
     #  Son inmutables.
     def __init__(self, block):
@@ -169,6 +180,7 @@ class Block(GS_Type):
         self.hash = uuid.uuid1().int
         self.precedence = 3
 
+    # noinspection PyUnusedLocal
     def coerce(self, precedence):
         return self
 
@@ -191,7 +203,8 @@ class Block(GS_Type):
     def __iter__(self):
         return iter(self.name)
 
-class Array(GS_Type):
+
+class Array(GSType):
     def __init__(self, lista=None):
         if None:
             lista = []
@@ -205,12 +218,40 @@ class Array(GS_Type):
         if precedence == 1:
             return self
         if precedence == 2:
-            return String(str(self.name))
+            # Para transformar un array en string,
+            # se convierten los enteros en el caracter
+            # del mismo valor y se concatenan con otros
+            # contenidos para formar un string
+            #
+            # [51 52 'x']'23'+ => "34x23"
+            lista = []
+            for elemento in self.name:
+                if isinstance(elemento, Integer):
+                    lista.append(chr(int(elemento)))
+                elif isinstance(elemento, String):
+                    # Necesitamos el string sin editar
+                    lista.append(elemento.name)
+                else:
+                    raise ValueError(f"Error en Array.coerce(): elemento desconocido {type(elemento)}")
+
+            st = ''.join(lista)
+            return String(st)
         if precedence == 3:
-            return Block([self])
+            #   Convertir el array en un bloque
+            lista = []
+            for elemento in self.name:
+                if isinstance(elemento, Integer):
+                    lista.append(elemento)
+                elif isinstance(elemento, String):
+                    # Los string se convierten en variables.
+                    # Necesitamos el nombre sin editar
+                    lista.append(Var(elemento.name))
+                else:
+                    raise ValueError(f"Error en Array.coerce(): elemento desconocido {type(elemento)}")
+
+            return Block(lista)
 
         raise ValueError(f"Error en Array.coerse: precedencia invalida {precedence}")
-
 
     def append(self, elemento):
         self.name.append(elemento)
