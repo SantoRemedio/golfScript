@@ -119,7 +119,7 @@ class TestBasico(unittest.TestCase):
         source = "{abcd  efg}"
         resultado = List([x for x in tokenizador(source)])
         b = Block(resultado)
-        self.assertEqual('[1 -1]', str(resultado))
+        self.assertEqual('[{abcd efg}]', str(resultado))
 
     def test_xor_string(self):
         reset()
@@ -133,7 +133,7 @@ class TestBasico(unittest.TestCase):
         a = List(['a', 'b', 'c'])
         b = List(['a', 1, 2])
         c = a ^ b
-        self.assertEqual('"bcdef12"', str(c))
+        self.assertEqual('[b c 1 2]', str(List(c)))
 
     def test_and_List(self):
         reset()

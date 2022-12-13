@@ -1,5 +1,5 @@
 import unittest
-from compiler import evaluate, reset, tokenizador
+from compiler import evaluar, reset, tokenizador
 
 class TestBasico(unittest.TestCase):
 
@@ -7,26 +7,26 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "1:a a"
 
-        resultado = evaluate(source)
+        resultado = evaluar(source)
         self.assertEqual("[1 1]", str(resultado))
 
     def test_definir_operador(self):
         reset()
         source = "{.}{*}+:square;2 square"
 
-        resultado = evaluate(source)
+        resultado = evaluar(source)
         self.assertEqual("[4]", str(resultado))
 
     def test_block(self):
         reset()
         source = "2 {2*} 5*"
 
-        resultado = evaluate(source)
+        resultado = evaluar(source)
         self.assertEqual("[64]", str(resultado))
 
     def test_block(self):
         reset()
         source = "10{.(}3*"
 
-        resultado = evaluate(source)
+        resultado = evaluar(source)
         self.assertEqual("[10 9 8 7]", str(resultado))

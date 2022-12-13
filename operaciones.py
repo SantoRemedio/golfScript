@@ -4,15 +4,10 @@
 # con código ejecutable.
 # Se recuperan mediante el diccionario `variables`
 
-# Los string del fuente se representan internamente con cremillas
-# incluidas.
-
 from tipos import Block, String, Integer, Var, List, cero, uno, menos_uno
 
-uno = Integer(1)
-
-def evaluate(source):
-    raise ValueError("Función no importa correctamente la función evaluate")
+def evaluar(source):
+    raise ValueError("Función no importa correctamente la función evaluar")
 
 def gs_coerce(a, b):
     mayor = max(a.precedence, b.precedence)
@@ -47,7 +42,7 @@ def gs_subtract(stack):
     stack.append(resta)
 
 def gs_multiply(stack):
-    from compiler import evaluate
+    from compiler import evaluar
     top = stack.pop()
     sig = stack.pop()
 
@@ -56,7 +51,7 @@ def gs_multiply(stack):
         stack.append(resultado)
     elif isinstance(top, Integer) and isinstance(sig, Block):
         for _ in range(int(top)):
-            evaluate(sig.name)
+            evaluar(sig.name)
     elif isinstance(top, Integer) and isinstance(sig, List):
         lista = []
         for _ in range(int(top)):
@@ -81,12 +76,12 @@ def gs_multiply(stack):
     elif isinstance(top, Block) and isinstance(sig, List):
         stack.extend(sig.name)
         for _ in range(len(sig.name) - 1):  # Aplicar el bloque n - 1 veces
-            evaluate(top)
+            evaluar(top)
     elif isinstance(top, Block) and isinstance(sig, String):
         for letra in sig.name:
             stack.append(Integer(ord(letra)))
         for _ in range(len(sig.name) - 1):
-            evaluate(top)
+            evaluar(top)
 
 
 def gs_div(stack):
@@ -144,7 +139,7 @@ def gs_inc_1(stack):
 
 
 def gs_chancho(stack):
-    from compiler import evaluate
+    from compiler import evaluar
     elemento = stack.pop()
     if isinstance(elemento, Var):
         elemento = variables[elemento]
@@ -152,9 +147,9 @@ def gs_chancho(stack):
     if isinstance(elemento, Integer):
         stack.append(Integer(~elemento.name))
     elif isinstance(elemento, String):
-        evaluate(elemento.name)
+        evaluar(elemento.name)
     elif isinstance(elemento, Block):
-        evaluate(elemento.name)
+        evaluar(elemento.name)
     elif isinstance(elemento, List):
         stack.extend(elemento.name)
     else:
@@ -262,14 +257,15 @@ def gs_if(stack):
     #
     #     valor_if valor_true valor_false if
     #
+    from compiler import evaluar
     valor_false = stack.pop()
     valor_true = stack.pop()
     valor_if = stack.pop()
 
     if valor_if:
-        evaluate(valor_true)
+        evaluar(valor_true)
     else:
-        evaluate(valor_false)
+        evaluar(valor_false)
 
 def gs_do(stack):
     #
@@ -277,10 +273,11 @@ def gs_do(stack):
     #
     # Ejecuta el bloque, saca tope del stack; si
     # es true, sigue.
-    from compiler import evaluate
+    from compiler import evaluar
+
     bloque = stack.pop()
     while True:
-        evaluate(bloque)
+        evaluar(bloque)
         valor_if = stack.pop()
         if not valor_if:
             break
@@ -292,14 +289,15 @@ def gs_while(stack):
     # Ejecuta el bloque-condicion y saca un valor del stack.
     # Si es True, ejecuta el bloque-ejecutar.
     # Si es False, reinserta valor y termina
-    from compiler import evaluate
+    from compiler import evaluar
+
     bloque_condicion = stack.pop()
     bloque_ejecutar = stack.pop()
     while True:
-        evaluate(bloque_condicion)
+        evaluar(bloque_condicion)
         valor_if = stack.pop()
         if valor_if:
-            evaluate(bloque_ejecutar)
+            evaluar(bloque_ejecutar)
         else:
             stack.append(valor_if)
             break
@@ -311,45 +309,53 @@ def gs_until(stack):
     # Ejecuta el bloque-condicion y saca un valor del stack.
     # Si es True, ejecuta el bloque-ejecutar.
     # Si es False, reinserta valor y termina
-    from compiler import evaluate
+    from compiler import evaluar
+
     bloque_condicion = stack.pop()
     bloque_ejecutar = stack.pop()
     while True:
-        evaluate(bloque_condicion)
+        evaluar(bloque_condicion)
         valor_if = stack.pop()
         if valor_if:
             stack.append(valor_if)
             break
         else:
-            evaluate(bloque_ejecutar)
+            evaluar(bloque_ejecutar)
 
 
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
-variables = {
-    Var('+'): gs_sum,
-    Var(';'): gs_pop,
-    Var('+'): gs_sum,
-    Var('-'): gs_subtract,
-    Var('*'): gs_multiply,
-    Var('/'): gs_div,
-    Var('?'): gs_power,
-    Var(')'): gs_inc_1,
-    Var('('): gs_dec_1,
-    Var('~'): gs_chancho,
-    Var('.'): gs_dup,
-    Var('$'): gs_dup_n,
-    Var('\\'): gs_swap,
-    Var('@'): gs_rotate,
-    Var('%'): gs_module,
-    Var('!'): gs_not,
-    Var('`'): gs_repr,
-    Var('>'): gs_greater,
-    Var('^'): gs_bitwise_xor,
-    Var('&'): gs_bitwise_and,
-    Var('if'): gs_if,
-    Var('do'): gs_do,
-    Var('while'): gs_while,
-    Var('until'): gs_until,
-}
+variables = {}
 
+def reset_variables():
+    global variables
+
+    variables = {
+        Var('+'): gs_sum,
+        Var(';'): gs_pop,
+        Var('+'): gs_sum,
+        Var('-'): gs_subtract,
+        Var('*'): gs_multiply,
+        Var('/'): gs_div,
+        Var('?'): gs_power,
+        Var(')'): gs_inc_1,
+        Var('('): gs_dec_1,
+        Var('~'): gs_chancho,
+        Var('.'): gs_dup,
+        Var('$'): gs_dup_n,
+        Var('\\'): gs_swap,
+        Var('@'): gs_rotate,
+        Var('%'): gs_module,
+        Var('!'): gs_not,
+        Var('`'): gs_repr,
+        Var('>'): gs_greater,
+        Var('^'): gs_bitwise_xor,
+        Var('&'): gs_bitwise_and,
+        Var('if'): gs_if,
+        Var('do'): gs_do,
+        Var('while'): gs_while,
+        Var('until'): gs_until,
+    }
+
+
+reset_variables()

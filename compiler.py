@@ -1,7 +1,7 @@
 import re
 
 from tipos import Block, Var, Integer, String, List, colon
-from operaciones import variables
+from operaciones import variables, reset_variables
 import types
 import typing
 
@@ -15,8 +15,11 @@ patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|[~@\\%\.{};+]|-?
 #
 stack = List([])
 
-def evaluate(source_code):
-    #   Recibe un código a ejecutar.
+def evaluar(source_code):
+    #   Recibe un código a ejecutar:
+    #   - Codigo fuente.
+    #   - Iterables
+    #   - Escalares
     #   El código puede venir como string (formato fuente)
     #   o ya tokenizado.
     #   El stack global de golfScript.
@@ -24,9 +27,10 @@ def evaluate(source_code):
 
     if isinstance(source_code, str):
         source = tokenizador(source_code)
-    else:
+    elif hasattr(source_code, '__iter__'):
         source = source_code
-
+    else:
+        source = [source_code]
 
     elemento_prev = None
     for elemento in source:
@@ -40,7 +44,7 @@ def evaluate(source_code):
                     elif isinstance(variables[elemento], types.FunctionType):
                         variables[elemento](stack)
                     elif isinstance(variables[elemento], Block):
-                        evaluate(variables[elemento].name)
+                        evaluar(variables[elemento].name)
                     else:
                         #  el valor al stack
                         stack.append(variables[elemento])
@@ -49,7 +53,7 @@ def evaluate(source_code):
 
                 elemento_prev = elemento
             except Exception as e:
-                print(f"Error en evaluate: {e}")
+                print(f"Error en evaluar: {e}")
                 print(type(elemento))
                 print(elemento)
                 print(source_code)
@@ -130,5 +134,10 @@ def tokenizador(pgma):
 
 
 def reset():
+    #
+    #   Reinicia el estado para permitir la correcta
+    #   ejecución de los tests unitarios.
+    #
     global stack
     stack.reset()
+    reset_variables()
