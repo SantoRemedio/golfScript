@@ -14,9 +14,11 @@ def lexer(source):
     #   Funcion generadora; marca de fin es None
     for linea in source.split('\n'):
         for parte in patron.findall(linea):
-            if parte[0] == "'":
+            if parte[0] == "#":  # El resto es comentario
+                continue
+            elif parte[0] == "'":
                 word = String(parte[1:-1])
-            elif parte.isdecimal():
+            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
             elif parte[0] not in '[]{}':
                 word = Var(parte)

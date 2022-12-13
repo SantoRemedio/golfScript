@@ -176,3 +176,70 @@ class TestBasico(unittest.TestCase):
         resultado = evaluate(source)
         self.assertEqual('["1"]', str(resultado))
 
+    def test_coerce(self):
+        reset()
+        source = "'asdf'{1234}+"
+        resultado = evaluate(source)
+        self.assertEqual('[{asdf 1234}]', str(resultado))
+
+    def test_negativos(self):
+        reset()
+        source = "1 -3"
+        resultado = evaluate(source)
+        self.assertEqual('[1 -3]', str(resultado))
+
+    def test_negativos2(self):
+        reset()
+        source = "1 2-3+"
+        resultado = evaluate(source)
+        self.assertEqual('[1 -1]', str(resultado))
+
+    def test_negativos3(self):
+        reset()
+        source = "1 2 -3+"
+        resultado = evaluate(source)
+        self.assertEqual('[1 -1]', str(resultado))
+
+
+    def test_resta_block(self):
+        reset()
+        source = "[5 2 5 4 1 1][1 2]-"
+        resultado = evaluate(source)
+        self.assertEqual('[[5 5 4]]', str(resultado))
+
+    def test_mult_string(self):
+        reset()
+        source = "'abc'3*"
+        resultado = evaluate(source)
+        self.assertEqual('["abcabcabc"]', str(resultado))
+
+    def test_mult_string2(self):
+        reset()
+        source = "3'abc'*"
+        resultado = evaluate(source)
+        self.assertEqual('["abcabcabc"]', str(resultado))
+
+    def test_mult_list(self):
+        reset()
+        source = "[1 2 3]3*"
+        resultado = evaluate(source)
+        self.assertEqual('[[1 2 3 1 2 3 1 2 3]]', str(resultado))
+
+    def test_mult_list_string(self):
+        reset()
+        source = "[1 2 3]','*"
+        resultado = evaluate(source)
+        self.assertEqual('["1,2,3"]', str(resultado))
+
+    def test_mult_list_list(self):
+        reset()
+        source = "[1 2 3][4]*"
+        resultado = evaluate(source)
+        self.assertEqual('[[1 4 2 4 3]]', str(resultado))
+
+    def test_mult_string_string(self):
+        reset()
+        source = "'asdf'' '*"
+        resultado = evaluate(source)
+        self.assertEqual('["a s d f"]', str(resultado))
+

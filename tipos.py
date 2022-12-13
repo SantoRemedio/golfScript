@@ -91,19 +91,17 @@ class String(GS_Type):
         self.precedence = 2
 
     def coerce(self, precedence):
-        if precedence == 0:
-            return self
-        if precedence == 1:
-            return self
-        if precedence == 2:
-            return self
         if precedence == 3:
-            return Block([self])
+            return Block([self.name])
+        else:
+            return self
+
     def __add__(self, other):
         return String(self.name + other.name)
 
     def __str__(self):
-        return f'"{self.name}"'
+        var = self.name.replace('"',  '\\"')
+        return f'"{var}"'
 
     def __repr__(self):
         return f"'{self.name}'"
@@ -133,10 +131,13 @@ class Block(GS_Type):
         return self.__repr__()
 
     def __repr__(self):
-        return "{" + ', '.join(str(x) for x in self.name) + "}"
+        return "{" + ' '.join(str(x) for x in self.name) + "}"
 
     def __bool__(self):
         return len(self.name) > 0
+
+    def __iter__(self):
+        return iter(self.name)
 
 class List(GS_Type):
     def __init__(self, lista=None):
@@ -186,6 +187,9 @@ class List(GS_Type):
 
     def __len__(self):
         return len(self.name)
+
+    def __contains__(self, item):
+        return item in self.name
 
     def __str__(self):
         return '[' + ' '.join(str(x) for x in self.name) + ']'

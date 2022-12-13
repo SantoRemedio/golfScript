@@ -23,3 +23,10 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluate(source)
         self.assertEqual("[64]", str(resultado))
+
+    def test_block(self):
+        reset()
+        source = "10{.(}3*"
+
+        resultado = evaluate(source)
+        self.assertEqual("[10 9 8 7]", str(resultado))

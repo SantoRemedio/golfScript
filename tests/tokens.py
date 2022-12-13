@@ -16,7 +16,7 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "1 {1 3 4} 2"
         resultado = List([x for x in tokenizador(source)])
-        self.assertEqual("[1 {1, 3, 4} 2]", str(resultado))
+        self.assertEqual("[1 {1 3 4} 2]", str(resultado))
         self.assertEqual("<class 'tipos.Block'>", str(type(resultado[1])))
 
     def test_lista(self):
@@ -94,11 +94,22 @@ class TestBasico(unittest.TestCase):
     def test_str_str(self):
         reset()
         a = String("abc")
-        self.assertEqual("'abc'", str(a))
+        self.assertEqual('"abc"', str(a))
 
     def test_str_s(self):
         reset()
         source = "'asdf'$"
         resultado = List([x for x in tokenizador(source)])
-        self.assertEqual("['asdf' $]", str(resultado))
+        self.assertEqual('["asdf" $]', str(resultado))
 
+    def test_comment(self):
+        reset()
+        source = "1 1+ # comentario"
+        resultado = List([x for x in tokenizador(source)])
+        self.assertEqual('[1 1 +]', str(resultado))
+
+    def test_negativo(self):
+        reset()
+        source = "1 -1"
+        resultado = List([x for x in tokenizador(source)])
+        self.assertEqual('[1 -1]', str(resultado))

@@ -34,19 +34,51 @@ def gs_sum(stack):
 def gs_subtract(stack):
     a = stack.pop()
     b = stack.pop()
-    resta = b - a
+    a, b = gs_coerce(a, b)
+    if isinstance(a, Integer):
+        resta = b - a
+    elif isinstance(a, List):
+        lista = []
+        for elemento in b:
+            if elemento not in a:
+                lista.append(elemento)
+        resta = List(lista)
+
     stack.append(resta)
 
 def gs_multiply(stack):
     from compiler import evaluate
     top = stack.pop()
     sig = stack.pop()
+
     if isinstance(top, Integer) and isinstance(sig, Integer):
         resultado = top * sig
         stack.append(resultado)
     elif isinstance(top, Integer) and isinstance(sig, Block):
         for _ in range(int(top)):
             evaluate(sig.name)
+    elif isinstance(top, Integer) and isinstance(sig, List):
+        lista = []
+        for _ in range(int(top)):
+            lista.extend(sig.name)
+        stack.append(List(lista))
+    elif isinstance(top, Integer) and isinstance(sig, String):
+        stack.append(String(sig.name * int(top)))
+    elif isinstance(top, String) and isinstance(sig, Integer):
+        stack.append(String(top.name * int(sig)))
+    elif isinstance(top, String) and isinstance(sig, List):
+        lista = top.name.join(str(x) for x in sig.name)
+        stack.append(String(lista))
+    elif isinstance(top, List) and isinstance(sig, List):
+        lista = []
+        for x in sig:
+            lista.append(x)
+            lista.extend(top)
+        stack.append(List(lista[:-1]))
+    elif isinstance(top, String) and isinstance(sig, String):
+        nvo = top.name.join(sig.name)
+        stack.append(String(nvo))
+
 
 def gs_div(stack):
     a = stack.pop()
@@ -64,7 +96,8 @@ def gs_dec_1(stack):
     elemento = stack.pop()
 
     if isinstance(elemento, Integer):
-        stack.append(Integer(elemento - uno))
+        nvo = elemento - uno
+        stack.append(nvo)
     elif isinstance(elemento, String):
         #  Caso concatenacion
         valor_byte = ord(elemento.pop(0))
