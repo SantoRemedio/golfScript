@@ -1,8 +1,31 @@
+#
+#   golfScript maneja cuatro tipos de datos:
+#   - Integer
+#   - String
+#   - Array
+#   - Block
+#   que son basicamente wrappers alrededor de los
+#   tipos basicos.
+#
+#   Cada tipo tiene un orden de precedencia, que controla
+#   las conversiones en operaciones que mezclan tipos.
+#   El método coerce(precedencia) convierte tipos.
+#
+#   El quinto tipo, Var, sirve para manejar las
+#   llaves del diccionario de variables.
+#
 import uuid
 
 class GS_Type:
+    #   Tipo base, no se usa por si solo.
     def __init__(self, name):
         self.name = name
+
+    def coerse(self, precedence):
+        #   Cada tipo de dato debe ser capaz de
+        #   autoconvertirse en otro vía este
+        #   metodo.
+        raise ValueError("Método coerce() no implementado")
 
     def __eq__(self, other):
         return self.name == other.name if type(self) == type(other) else False
@@ -16,13 +39,15 @@ class GS_Type:
         return hash(self.name);
 
 class Var(GS_Type):
-    #   Variables
+    #   Contiene el nombre de una variable.
+    #   El nombre de una variable puede ser cualquier
+    #   tipo de objeto.
     def __init__(self, name):
         #   name es el string con el nombre de la variable
         super().__init__(name)
 
 class Integer(GS_Type):
-    # Enteros
+    # Representa enteros.
     def __init__(self, name):
         #   name es la representación del entero como string
         super().__init__(name)
@@ -34,12 +59,13 @@ class Integer(GS_Type):
         if precedence == 0:
             return self
         if precedence == 1:
-            return List([self])
+            return Array([self])
         if precedence == 2:
             return String(str(self.name))
         if precedence == 3:
             return Block([self])
         raise ValueError(f"Error en Integer.coerse: precedencia invalida {precedence}")
+
     def __add__(self, other):
         suma = self.name + other.name
         return Integer(suma)
@@ -102,8 +128,10 @@ class String(GS_Type):
     def coerce(self, precedence):
         if precedence == 3:
             return Block([self.name])
-        else:
+        elif precedence < 3:
             return self
+
+        raise ValueError(f"Error en String.coerse: precedencia invalida {precedence}")
 
     def __add__(self, other):
         return String(self.name + other.name)
@@ -163,7 +191,7 @@ class Block(GS_Type):
     def __iter__(self):
         return iter(self.name)
 
-class List(GS_Type):
+class Array(GS_Type):
     def __init__(self, lista=None):
         if None:
             lista = []
@@ -181,6 +209,8 @@ class List(GS_Type):
         if precedence == 3:
             return Block([self])
 
+        raise ValueError(f"Error en Array.coerse: precedencia invalida {precedence}")
+
 
     def append(self, elemento):
         self.name.append(elemento)
@@ -195,7 +225,7 @@ class List(GS_Type):
         self.name = []
 
     def __add__(self, other):
-        return List([*self.name, *other.name])
+        return Array([*self.name, *other.name])
 
     def __hash__(self):
         return self.hash
@@ -227,11 +257,11 @@ class List(GS_Type):
             if elemento not in self.name and elemento not in faltantes:
                 faltantes.append(elemento)
         lista = [elemento for elemento in self.name if elemento not in other.name]
-        return List(lista + faltantes)
+        return Array(lista + faltantes)
 
     def __and__(self, other):
         lista = [elemento for elemento in self.name if elemento in other.name]
-        return List(lista)
+        return Array(lista)
 
 
 cero = Var(0)

@@ -4,7 +4,7 @@
 # con código ejecutable.
 # Se recuperan mediante el diccionario `variables`
 
-from tipos import Block, String, Integer, Var, List, cero, uno, menos_uno
+from tipos import Block, String, Integer, Var, Array, cero, uno, menos_uno
 
 def evaluar(source):
     raise ValueError("Función no importa correctamente la función evaluar")
@@ -32,12 +32,12 @@ def gs_subtract(stack):
     a, b = gs_coerce(a, b)
     if isinstance(a, Integer):
         resta = b - a
-    elif isinstance(a, List):
+    elif isinstance(a, Array):
         lista = []
         for elemento in b:
             if elemento not in a:
                 lista.append(elemento)
-        resta = List(lista)
+        resta = Array(lista)
 
     stack.append(resta)
 
@@ -52,28 +52,28 @@ def gs_multiply(stack):
     elif isinstance(top, Integer) and isinstance(sig, Block):
         for _ in range(int(top)):
             evaluar(sig.name)
-    elif isinstance(top, Integer) and isinstance(sig, List):
+    elif isinstance(top, Integer) and isinstance(sig, Array):
         lista = []
         for _ in range(int(top)):
             lista.extend(sig.name)
-        stack.append(List(lista))
+        stack.append(Array(lista))
     elif isinstance(top, Integer) and isinstance(sig, String):
         stack.append(String(sig.name * int(top)))
     elif isinstance(top, String) and isinstance(sig, Integer):
         stack.append(String(top.name * int(sig)))
-    elif isinstance(top, String) and isinstance(sig, List):
+    elif isinstance(top, String) and isinstance(sig, Array):
         lista = top.name.join(str(x) for x in sig.name)
         stack.append(String(lista))
-    elif isinstance(top, List) and isinstance(sig, List):
+    elif isinstance(top, Array) and isinstance(sig, Array):
         lista = []
         for x in sig:
             lista.append(x)
             lista.extend(top)
-        stack.append(List(lista[:-1]))
+        stack.append(Array(lista[:-1]))
     elif isinstance(top, String) and isinstance(sig, String):
         nvo = top.name.join(sig.name)
         stack.append(String(nvo))
-    elif isinstance(top, Block) and isinstance(sig, List):
+    elif isinstance(top, Block) and isinstance(sig, Array):
         stack.extend(sig.name)
         for _ in range(len(sig.name) - 1):  # Aplicar el bloque n - 1 veces
             evaluar(top)
@@ -96,7 +96,7 @@ def gs_power(stack):
     if isinstance(a, Integer) and isinstance(b, Integer):
         power = b ** a
         stack.append(power)
-    elif isinstance(a, List):
+    elif isinstance(a, Array):
         try:
             index = a.name.index(b)
             stack.append(Integer(index))
@@ -114,8 +114,8 @@ def gs_dec_1(stack):
         valor_byte = ord(elemento.pop(0))
         stack.append(elemento)
         stack.append(str(valor_byte))
-    elif isinstance(elemento, List):
-        stack.append(List(elemento.name[1:]))
+    elif isinstance(elemento, Array):
+        stack.append(Array(elemento.name[1:]))
         stack.append(elemento.name[0])
     else:
         raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
@@ -131,8 +131,8 @@ def gs_inc_1(stack):
         valor_byte = ord(contenido[-1])
         stack.append(String(contenido[:-1]))
         stack.append(Integer(valor_byte))
-    elif isinstance(elemento, List):
-        stack.append(List(elemento.name[:-1]))
+    elif isinstance(elemento, Array):
+        stack.append(Array(elemento.name[:-1]))
         stack.append(elemento.name[-1])
     else:
         raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
@@ -150,7 +150,7 @@ def gs_chancho(stack):
         evaluar(elemento.name)
     elif isinstance(elemento, Block):
         evaluar(elemento.name)
-    elif isinstance(elemento, List):
+    elif isinstance(elemento, Array):
         stack.extend(elemento.name)
     else:
         raise ValueError(f"Error en gs_chancho: elemento desconocido {elemento}")
@@ -212,13 +212,13 @@ def gs_greater(stack):
     elif isinstance(top, Integer) and isinstance(sig, String):
         st = String(sig.name[int(top):])
         stack.append(st)
-    elif isinstance(top, Integer) and isinstance(sig, List):
-        lista = List(sig.name[int(top):])
+    elif isinstance(top, Integer) and isinstance(sig, Array):
+        lista = Array(sig.name[int(top):])
         stack.append(lista)
     elif isinstance(top, Integer) and isinstance(sig, Block):
-        from evaluador import tokenizador
+        from evaluador import tokenizar
         source = str(sig)[1:-1][int(top):]
-        for elemento in tokenizador('{' + source + '}'):
+        for elemento in tokenizar('{' + source + '}'):
             stack.append(elemento)
 
 def gs_less(stack):
@@ -229,13 +229,13 @@ def gs_less(stack):
     elif isinstance(top, Integer) and isinstance(sig, String):
         st = String(sig.name[:int(top)])
         stack.append(st)
-    elif isinstance(top, Integer) and isinstance(sig, List):
-        lista = List(sig.name[:int(top)])
+    elif isinstance(top, Integer) and isinstance(sig, Array):
+        lista = Array(sig.name[:int(top)])
         stack.append(lista)
     elif isinstance(top, Integer) and isinstance(sig, Block):
-        from evaluador import tokenizador
+        from evaluador import tokenizar
         source = str(sig)[1:-1][:int(top)]
-        for elemento in tokenizador('{' + source + '}'):
+        for elemento in tokenizar('{' + source + '}'):
             stack.append(elemento)
 
 def gs_bitwise_xor(stack):
@@ -349,6 +349,7 @@ def reset_variables():
         Var('!'): gs_not,
         Var('`'): gs_repr,
         Var('>'): gs_greater,
+        Var('<'): gs_less,
         Var('^'): gs_bitwise_xor,
         Var('&'): gs_bitwise_and,
         Var('if'): gs_if,
