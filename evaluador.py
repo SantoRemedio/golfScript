@@ -34,6 +34,10 @@ patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|[~@\\%\.{};+]|-?
 # El stack siempre contendra exclusivamente Integer, String, Array y Block.
 #
 stack = Array([])
+#
+# en debug se imprime el stack y el elemento por cada elemento en el stream
+#
+modo_debug = False
 
 def evaluar(source_code):
     #   Recibe un código a ejecutar:
@@ -52,6 +56,7 @@ def evaluar(source_code):
 
     elemento_prev = None
     for elemento in source:
+        print(stack, elemento)
         #   Un elemento None marca el fin del código.
         #   (se necesita así en otras parts.
         if elemento is None:
@@ -163,3 +168,4 @@ def reset():
     global stack
     stack.reset()
     reset_variables()
+    modo_debug = False

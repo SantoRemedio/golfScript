@@ -2,7 +2,7 @@
 #   REPL del interprete de golfScript
 #
 import sys
-from evaluador import evaluar, reset, variables
+from evaluador import evaluar, reset, variables, modo_debug
 from tipos import Var
 
 if __name__ == '__main__':
@@ -24,11 +24,14 @@ if __name__ == '__main__':
                 print("vars: muestra la tabla de variables")
                 print("inspect x: muestra valor de x")
                 print("quit: termina la ejecución")
+                print("debug: entra/sale de debug")
                 print("CTRL-C para terminar")
             elif pgma == "reset":
                 reset()
             elif pgma == "quit":
                 break
+            elif pgma == "debug":
+                modo_debug = not modo_debug
             elif pgma == "vars":
                 for k, v in variables.items():
                     print(k, v)
