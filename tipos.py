@@ -300,10 +300,20 @@ class Array(GSType):
 
     def __xor__(self, other):
         faltantes = []
+        #   Extraer del otro operando todos los elementos que
+        #   no estan en éste (sin duplicados)
         for elemento in other.name:
             if elemento not in self.name and elemento not in faltantes:
                 faltantes.append(elemento)
-        lista = [elemento for elemento in self.name if elemento not in other.name]
+
+        #   Extraer todos los elementos de este Array que no están
+        #   en el otro operando (sin duplicados).
+
+        lista = []
+        for elemento in self.name:
+            if elemento not in other.name and elemento not in lista:
+                lista.append(elemento)
+        #lista = [elemento for elemento in self.name if elemento not in other.name]
         return Array(lista + faltantes)
 
     def __and__(self, other):

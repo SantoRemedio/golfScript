@@ -328,7 +328,7 @@ def gs_bitwise_xor(stack):
     top = stack.pop()
     sig = stack.pop()
     if type(top) == type(sig):
-        elemento = top ^ sig
+        elemento = sig ^ top
         stack.append(elemento)
 
 

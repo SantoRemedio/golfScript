@@ -340,6 +340,12 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('[329]', str(resultado))
 
+    def test_xor_array(self):
+        reset()
+        source = "[1 1 2 2][1 3]^"
+        resultado = evaluar(source)
+        self.assertEqual('[[2 3]]', str(resultado))
+
     def test_if(self):
         reset()
         source = "1 2 3 if"
