@@ -1,15 +1,15 @@
-# golfScript
+# golfScript v0.2
 Implementación Python de golfScript
 
 **Instalación**
 
-Copie los archivos a un directorio.
+Copiar los archivos a un directorio.
 
 **Ejecución**
 
 ```python gs.py```
 
-iniciaa una sesión en un REPL.
+inicia una sesión en un REPL.
 
 También puede pasar scripts en la llamada:
 
@@ -19,9 +19,10 @@ el script se ejecuta dentro del REPL.
 
 **Notas**
 
-En golfScript las cadenas se escriben con comillas simples y se muestran con cremillas dobles.
-
-`until` no está correctamente implementado.
+1. En golfScript las cadenas se escriben con comillas simples y se muestran con cremillas dobles.
+2. `until` no está correctamente implementado.
+3. Los strings no admiten secuencias de escape ni interpolación
+4. El REPL no tiene capacidades de edición ni historia.
 
 Es frágil.
 
