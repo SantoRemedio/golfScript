@@ -23,6 +23,8 @@ el script se ejecuta dentro del REPL.
 2. `until` no está correctamente implementado.
 3. Los strings no admiten secuencias de escape ni interpolación
 4. El REPL no tiene capacidades de edición ni historia.
+5. Incluye el interprete oficial de golfScript. Si tiene Ruby instalado, puede ejecutar `ruby golfscript.rb`.
+
 
 Es frágil.
 
