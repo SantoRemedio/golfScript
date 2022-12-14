@@ -3,6 +3,7 @@
 # Los operadores se consideran variables asignadas
 # con código ejecutable.
 # Se recuperan mediante el diccionario `variables`
+import random
 
 from tipos import Block, String, Integer, Var, Array, cero, uno, menos_uno
 from operadores.gs_multiply import gs_multiply
@@ -10,6 +11,7 @@ from operadores.gs_div import gs_div
 from operadores.gs_dup import gs_dup
 from operadores.gs_dup_n import gs_dup_n
 from operadores.gs_size import gs_size
+
 
 def evaluar(source):
     raise ValueError(f"Función no importa correctamente la función evaluar en {source}")
@@ -136,9 +138,6 @@ def gs_pop(stack):
         stack.pop()
     else:
         raise ValueError("gs_pop: Stack vacio")
-
-
-
 
 
 def gs_rotate(stack):
@@ -323,7 +322,20 @@ def gs_until(stack):
 
 def gs_print(stack):
     a = stack.pop()
-    print(str(a),end='')
+    print(a, end='')
+
+
+def gs_random(stack):
+    a = stack.pop()
+    valor = random.randint(0, int(a) - 1)
+    stack.append(Integer(valor))
+
+
+def gs_abs(stack):
+    a = int(stack.pop())
+    if a < 0:
+        a = -a
+    stack.append(Integer(a))
 
 
 # El diccionario variables contiene las definiciones de
@@ -363,6 +375,8 @@ def reset_variables():
         Var('while'): gs_while,
         Var('until'): gs_until,
         Var('print'): gs_print,
+        Var('random'): gs_random,
+        Var('abs'): gs_abs,
     }
 
 

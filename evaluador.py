@@ -146,7 +146,10 @@ def lexer(source):
                 #   que los encuentra.
                 #   No he logrado refactorizar esta parte para moverla
                 #   a tokenizar().
-                word = String(parte[1:-1])
+                if parte[1:-1] == r'\n':
+                    word = String('\n')
+                else:
+                    word = String(parte[1:-1])
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
             elif parte[0] not in '[]{}':
@@ -182,4 +185,4 @@ def reset():
     evaluar(r"{1$\if }:or;")
     evaluar(r"{\!!{!} *}:xor;")
     evaluar(r"{`puts}:p;")
-    evaluar(r"{'\n'}:n;")
+    evaluar(r"'\n':n;")
