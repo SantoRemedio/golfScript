@@ -91,7 +91,6 @@ def evaluar(source_code):
             print(f"Fuente:  {source_code}")
     return stack
 
-
 def tokenizar(pgma):
     #  Recibe las partes elementales del pgma y los
     #  convierte a los tipos adecuados
@@ -139,26 +138,6 @@ def tokenizar(pgma):
         word = next(source)
 
 
-def preclasificar(source):
-    #
-    #   Convierte palabras en Integer y String
-    #   Detecta variables y crea entrada en 'variables'
-    #   Otras palabras pasan sin conversión
-    #
-    for word in lexer(source):
-        if word[0] in "'\"":  # Acepta string delimitados con comillas simples y dobles
-            token = String(word[1:-1])
-        elif word.isdecimal() or (word[0] in '+-' and word[1:].isdecimal()):
-            token = Integer(int(word))
-        elif word[0] not in '[]{}':
-            token = Var(word)
-            if token not in variables:
-                variables[token] = None
-        else:
-            token = word
-        yield token
-
-
 def lexer(source):
     #   Divide el programa fuente en palabras.
     #   Funcion generadora; marca de fin es None
@@ -166,7 +145,25 @@ def lexer(source):
         for parte in patron.findall(linea):
             if parte[0] == "#":  # El resto es comentario
                 continue
-            yield parte
+            elif parte[0] in "'\"":  # Acepta string delimitados con comillas simples y dobles
+                #   Convierte enteros y strings a medida
+                #   que los encuentra.
+                #   No he logrado refactorizar esta parte para moverla
+                #   a tokenizar().
+                word = String(parte[1:-1])
+            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
+                word = Integer(int(parte))
+            elif parte[0] not in '[]{}':
+                word = Var(parte)
+                if word not in variables:
+                    variables[word] = None
+            else:
+                #   Algunos palabras se entregan como texto, ya
+                #   que son entidades complejas.
+                #   Incluyen los []{}
+                word = parte
+
+            yield word
     yield None
 
 
