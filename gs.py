@@ -6,12 +6,13 @@ from evaluador import evaluar, reset, variables, modo_debug, stack
 from tipos import Var
 
 if __name__ == '__main__':
+    reset()
+    
     print("Interprete golfScript 0.1 - Dic/2022 - Candid Moe")
     print("Esta versión acepta el código en http://golfscript.com/golfscript/builtin.html")
     print("REPL sin historia ni editor. CTRL-C para terminar. help para ayuda")
     print("Operadores: ", list(variables.keys()))
 
-    reset()
     if len(sys.argv) == 2:
         pgma = sys.argv[1]
         print(f">{pgma}")

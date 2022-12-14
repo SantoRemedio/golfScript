@@ -181,3 +181,5 @@ def reset():
     evaluar("{1$if }:and;")
     evaluar(r"{1$\if }:or;")
     evaluar(r"{\!!{!} *}:xor;")
+    evaluar(r"{`puts}:p;")
+    evaluar(r"{'\n'}:n;")
