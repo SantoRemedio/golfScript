@@ -8,7 +8,7 @@
 #   tipos basicos.
 #
 #   Cada tipo tiene un orden de precedencia que controla
-#   las conversiones en operaciones que mezclan tipos.
+#   las conversiones en operadores que mezclan tipos.
 #   El método coerce(precedencia) convierte tipos.
 #
 #   El quinto tipo, Var, sirve para manejar las

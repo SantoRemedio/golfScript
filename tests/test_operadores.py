@@ -243,6 +243,13 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('[[4 4 4]]', str(resultado))
 
+    def test_xor_logico(self):
+        reset()
+        source = "0 [3] xor"
+
+        resultado = evaluar(source)
+        self.assertEqual('[[3]]', str(resultado))
+
     def test_mult_string_string(self):
         reset()
         source = "'asdf'' '*"
@@ -471,3 +478,9 @@ class TestBasico(unittest.TestCase):
         source = "[10 20 30]4="
         resultado = evaluar(source)
         self.assertEqual("[]", str(resultado))
+
+    def test_div_array_array(self):
+        reset()
+        source = "[ 0 1 2 3 4 5 3 2 3 6] [2 3]/"
+        resultado = evaluar(source)
+        self.assertEqual("[[[0 1] [4 5 3] [6]]]", str(resultado))

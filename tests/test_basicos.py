@@ -1,5 +1,5 @@
 import unittest
-from evaluador import evaluar, reset, tokenizar
+from evaluador import evaluar, reset
 
 class TestBasico(unittest.TestCase):
 
