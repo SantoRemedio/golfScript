@@ -53,46 +53,61 @@ def gs_multiply(stack):
     top = stack.pop()
     sig = stack.pop()
 
-    if isinstance(top, Integer) and isinstance(sig, Integer):
-        resultado = top * sig
-        stack.append(resultado)
-    elif isinstance(top, Integer) and isinstance(sig, Block):
-        for _ in range(int(top)):
-            evaluar(sig.name)
-    elif isinstance(top, Integer) and isinstance(sig, Array):
-        lista = []
-        for _ in range(int(top)):
-            lista.extend(sig.name)
-        stack.append(Array(lista))
-    elif isinstance(top, Integer) and isinstance(sig, String):
-        stack.append(String(sig.name * int(top)))
-    elif isinstance(top, String) and isinstance(sig, Integer):
-        stack.append(String(top.name * int(sig)))
-    elif isinstance(top, String) and isinstance(sig, Array):
-        lista = top.name.join(str(x) for x in sig.name)
-        stack.append(String(lista))
-    elif isinstance(top, String) and isinstance(sig, String):
-        nvo = top.name.join(sig.name)
-        stack.append(String(nvo))
-    elif isinstance(top, Array) and isinstance(sig, Integer):
-        lista = top.name * int(sig)
-        stack.append(Array(lista))
-    elif isinstance(top, Array) and isinstance(sig, Array):
-        lista = []
-        for x in sig:
-            lista.append(x)
-            lista.extend(top)
-        stack.append(Array(lista[:-1]))
-    elif isinstance(top, Block) and isinstance(sig, Array):
-        stack.extend(sig.name)
-        for _ in range(len(sig.name) - 1):  # Aplicar el bloque n - 1 veces
-            evaluar(top)
-    elif isinstance(top, Block) and isinstance(sig, String):
-        for letra in sig.name:
-            stack.append(Integer(ord(letra)))
-        for _ in range(len(sig.name) - 1):
-            evaluar(top)
-    else:
+    valido = True
+
+    if isinstance(top, Integer):
+        if isinstance(sig, Integer):
+            resultado = top * sig
+            stack.append(resultado)
+        elif isinstance(sig, Block):
+            for _ in range(int(top)):
+                evaluar(sig.name)
+        elif isinstance(sig, Array):
+            lista = []
+            for _ in range(int(top)):
+                lista.extend(sig.name)
+            stack.append(Array(lista))
+        elif isinstance(sig, String):
+            stack.append(String(sig.name * int(top)))
+        else:
+            valido = False
+    elif isinstance(top, String):
+        if isinstance(sig, Integer):
+            stack.append(String(top.name * int(sig)))
+        elif isinstance(sig, Array):
+            lista = top.name.join(str(x) for x in sig.name)
+            stack.append(String(lista))
+        elif isinstance(sig, String):
+            nvo = top.name.join(sig.name)
+            stack.append(String(nvo))
+        else:
+            valido = False
+    elif isinstance(top, Array):
+        if isinstance(sig, Integer):
+            lista = top.name * int(sig)
+            stack.append(Array(lista))
+        elif isinstance(sig, Array):
+            lista = []
+            for x in sig:
+                lista.append(x)
+                lista.extend(top)
+            stack.append(Array(lista[:-1]))
+        else:
+            valido = False
+    elif isinstance(top, Block):
+        if isinstance(sig, Array):
+            stack.extend(sig.name)
+            for _ in range(len(sig.name) - 1):  # Aplicar el bloque n - 1 veces
+                evaluar(top)
+        elif isinstance(sig, String):
+            for letra in sig.name:
+                stack.append(Integer(ord(letra)))
+            for _ in range(len(sig.name) - 1):
+                evaluar(top)
+        else:
+            valido = False
+
+    if not valido:
         raise ValueError("gs_multiply: Tipo de dato erroneo")
 
 
