@@ -71,15 +71,18 @@ def gs_multiply(stack):
     elif isinstance(top, String) and isinstance(sig, Array):
         lista = top.name.join(str(x) for x in sig.name)
         stack.append(String(lista))
+    elif isinstance(top, String) and isinstance(sig, String):
+        nvo = top.name.join(sig.name)
+        stack.append(String(nvo))
+    elif isinstance(top, Array) and isinstance(sig, Integer):
+        lista = top.name * int(sig)
+        stack.append(Array(lista))
     elif isinstance(top, Array) and isinstance(sig, Array):
         lista = []
         for x in sig:
             lista.append(x)
             lista.extend(top)
         stack.append(Array(lista[:-1]))
-    elif isinstance(top, String) and isinstance(sig, String):
-        nvo = top.name.join(sig.name)
-        stack.append(String(nvo))
     elif isinstance(top, Block) and isinstance(sig, Array):
         stack.extend(sig.name)
         for _ in range(len(sig.name) - 1):  # Aplicar el bloque n - 1 veces

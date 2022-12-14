@@ -237,6 +237,12 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('[[1 4 2 4 3]]', str(resultado))
 
+    def test_mult_int_list(self):
+        reset()
+        source = "3 [4]*"
+        resultado = evaluar(source)
+        self.assertEqual('[[4 4 4]]', str(resultado))
+
     def test_mult_string_string(self):
         reset()
         source = "'asdf'' '*"

@@ -179,4 +179,4 @@ def reset():
     #   (mejor sería cargarlos de un archivo ...)
     evaluar("{1$if }:and;")
     evaluar(r"{1$\if }:or;")
-    evaluar(r"{\!!{!} *}:xor;")
+    evaluar(r"{\\!!{!} *}:xor;")
