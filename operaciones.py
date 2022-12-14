@@ -323,6 +323,21 @@ def gs_less(stack):
         for elemento in tokenizar('{' + source + '}'):
             stack.append(elemento)
 
+def gs_equal(stack):
+    a = stack.pop()
+    b = stack.pop()
+
+    if type(a) == type(b):
+        val = uno if a == b else cero
+        stack.append(val)
+    elif isinstance(a, Integer) and isinstance(b, Array):
+        try:
+            val = b[int(a)]
+            stack.append(val)
+        except IndexError:
+            #   Si el indice está fuera de rango, no
+            #   poner nada en el stack.
+            pass
 
 def gs_bitwise_xor(stack):
     top = stack.pop()
@@ -466,6 +481,7 @@ def reset_variables():
         Var('`'): gs_repr,
         Var('>'): gs_greater,
         Var('<'): gs_less,
+        Var('='): gs_equal,
         Var('^'): gs_bitwise_xor,
         Var('&'): gs_bitwise_and,
         Var(','): gs_size,

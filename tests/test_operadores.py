@@ -453,3 +453,15 @@ class TestBasico(unittest.TestCase):
         source = "5 3|"
         resultado = evaluar(source)
         self.assertEqual("[7]", str(resultado))
+
+    def test_equal_array(self):
+        reset()
+        source = "[10 20 30]2="
+        resultado = evaluar(source)
+        self.assertEqual("[30]", str(resultado))
+
+    def test_equal_array_out(self):
+        reset()
+        source = "[10 20 30]4="
+        resultado = evaluar(source)
+        self.assertEqual("[]", str(resultado))
