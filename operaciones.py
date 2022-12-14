@@ -179,8 +179,31 @@ def gs_dup_n(stack):
     if isinstance(top, Integer):
         stack.append(stack[-int(top) - 1])
     elif isinstance(top, String):
+        #   Para strings, hace un sort de los caracteres.
         nvo = String(''.join(sorted(top.name)))
         stack.append(nvo)
+    elif isinstance(top, Block):
+        from evaluador import evaluar
+        #   Los elementos deben ordenarse aplicando
+        #   a cada elemento el bloque en top
+        lista = stack.pop()
+        to_sort = []
+        for elemento in lista:
+            stack.append(elemento)
+            evaluar(top)
+            valor = stack.pop()
+            to_sort.append((valor, elemento))
+        nvo = [original for _, original in sorted(to_sort)]
+        stack.append(Array(nvo))
+    elif isinstance(top, Array):
+        try:
+            nvo = sorted(top.name)
+            stack.append(Array(nvo))
+        except Exception as e:
+            print("Error: {e}")
+    else:
+        raise ValueError("gs_dup_n: Tipo desconocido")
+
 
 
 def gs_dup(stack):
@@ -216,7 +239,8 @@ def gs_not(stack):
 
 
 def gs_repr(stack):
-    a = String(str(stack.pop()))
+    elemento = stack.pop()
+    a = String(str(elemento))
     stack.append(a)
 
 def gs_greater(stack):

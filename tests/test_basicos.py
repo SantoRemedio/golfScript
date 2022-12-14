@@ -30,3 +30,10 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluar(source)
         self.assertEqual("[10 9 8 7]", str(resultado))
+
+    def test_gcd(self):
+        reset()
+        source = r";'2706 410'~{.@\%.}do;"
+
+        resultado = evaluar(source)
+        self.assertEqual("[82]", str(resultado))

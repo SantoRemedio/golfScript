@@ -387,4 +387,21 @@ class TestBasico(unittest.TestCase):
         source = "[50 'x']{3}+"
         resultado = evaluar(source)
         self.assertEqual("[{50 x 3}]", str(resultado))
-        print(resultado)
+
+    def test_unstring(self):
+        reset()
+        source = '"1"`'
+        resultado = evaluar(source)
+        self.assertEqual('["\\"1\\""]', str(resultado))
+
+    def test_array_sort(self):
+        reset()
+        source = '[3 2 1]$'
+        resultado = evaluar(source)
+        self.assertEqual('[[1 2 3]]', str(resultado))
+
+    def test_block_sort(self):
+        reset()
+        source = "[1 2 3 4 5]{-1*}$"
+        resultado = evaluar(source)
+        self.assertEqual('[[5 4 3 2 1]]', str(resultado))

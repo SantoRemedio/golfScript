@@ -24,7 +24,7 @@ from operaciones import variables, reset_variables
 import types
 
 #   Este es el patrón oficial para reconoce golfScript
-patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
+patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|\"(?:\\.|[^\"])*\"?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
 # |"(?:\\.|[^"])*"?|-?[0-9]+|)
 
 #
@@ -85,10 +85,9 @@ def evaluar(source_code):
             elemento_prev = elemento
         except Exception as e:
             print(f"Error en evaluar: {e}")
-            print(type(elemento))
-            print(elemento)
-            print(source_code)
-            print(elemento.__hash__())
+            print(f"Tipo del elemento: {type(elemento)}")
+            print(f"Elemento: {elemento}")
+            print(f"Fuente:  {source_code}")
     return stack
 
 
@@ -99,7 +98,7 @@ def lexer(source):
         for parte in patron.findall(linea):
             if parte[0] == "#":  # El resto es comentario
                 continue
-            elif parte[0] == "'":
+            elif parte[0] in "'\"" :    # Acepta string delimitados con comillas simples y dobles
                 #   Convierte enteros y strings a medida
                 #   que los encuentra.
                 word = String(parte[1:-1])
