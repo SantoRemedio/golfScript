@@ -11,6 +11,7 @@ if __name__ == '__main__':
     print("REPL sin historia ni editor. CTRL-C para terminar. help para ayuda")
     print("Operadores: ", list(variables.keys()))
 
+    reset()
     if len(sys.argv) == 2:
         pgma = sys.argv[1]
         print(f">{pgma}")

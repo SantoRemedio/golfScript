@@ -24,7 +24,8 @@ from operaciones import variables, reset_variables
 import types
 
 #   Este es el patrón oficial para reconoce golfScript
-patron = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|\"(?:\\.|[^\"])*\"?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
+patron = re.compile(
+    r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|\"(?:\\.|[^\"])*\"?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
 # |"(?:\\.|[^"])*"?|-?[0-9]+|)
 
 #
@@ -138,6 +139,26 @@ def tokenizar(pgma):
         word = next(source)
 
 
+def preclasificar(source):
+    #
+    #   Convierte palabras en Integer y String
+    #   Detecta variables y crea entrada en 'variables'
+    #   Otras palabras pasan sin conversión
+    #
+    for word in lexer(source):
+        if word[0] in "'\"":  # Acepta string delimitados con comillas simples y dobles
+            token = String(word[1:-1])
+        elif word.isdecimal() or (word[0] in '+-' and word[1:].isdecimal()):
+            token = Integer(int(word))
+        elif word[0] not in '[]{}':
+            token = Var(word)
+            if token not in variables:
+                variables[token] = None
+        else:
+            token = word
+        yield token
+
+
 def lexer(source):
     #   Divide el programa fuente en palabras.
     #   Funcion generadora; marca de fin es None
@@ -145,24 +166,9 @@ def lexer(source):
         for parte in patron.findall(linea):
             if parte[0] == "#":  # El resto es comentario
                 continue
-            elif parte[0] in "'\"" :    # Acepta string delimitados con comillas simples y dobles
-                #   Convierte enteros y strings a medida
-                #   que los encuentra.
-                word = String(parte[1:-1])
-            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
-                word = Integer(int(parte))
-            elif parte[0] not in '[]{}':
-                word = Var(parte)
-                if word not in variables:
-                    variables[word] = None
-            else:
-                #   Algunos palabras se entregan como texto, ya
-                #   que son entidades complejas.
-                #   Incluyen los []{}
-                word = parte
-
-            yield word
+            yield parte
     yield None
+
 
 def reset():
     #
@@ -176,3 +182,8 @@ def reset():
     reset_variables()
     modo_debug = False
 
+    #   Operadores definidos en base a golfScript
+    #   (mejor sería cargarlos de un archivo ...)
+    evaluar("{1$if }:and;")
+    evaluar(r"{1$\if }:or;")
+    evaluar(r"{\!!{!} *}:xor;")

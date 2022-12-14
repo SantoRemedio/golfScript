@@ -208,8 +208,10 @@ def gs_chancho(stack):
 
 
 def gs_pop(stack):
-    if stack:
+    if len(stack):
         stack.pop()
+    else:
+        raise ValueError("gs_pop: Stack vacio")
 
 
 def gs_dup_n(stack):
