@@ -405,3 +405,45 @@ class TestBasico(unittest.TestCase):
         source = "[1 2 3 4 5]{-1*}$"
         resultado = evaluar(source)
         self.assertEqual('[[5 4 3 2 1]]', str(resultado))
+
+    def test_array_extraccion(self):
+        reset()
+        source = "[1 2 3 4 5]2/"
+        resultado = evaluar(source)
+        self.assertEqual('[[[1 2] [3 4] [5]]]', str(resultado))
+
+    def test_div_2(self):
+        reset()
+        source = "0 1 {100<} { .@+ } /"
+        resultado = evaluar(source)
+        self.assertEqual('[]', str(resultado))
+
+    def test_evaluar_condicion(self):
+        reset()
+        source = "1 100 <"
+        resultado = evaluar(source)
+        self.assertEqual("[1]", str(resultado))
+
+    def test_op_coma_int(self):
+        reset()
+        source = "10,"
+        resultado = evaluar(source)
+        self.assertEqual("[[0 1 2 3 4 5 6 7 8 9]]", str(resultado))
+
+    def test_op_coma_array(self):
+        reset()
+        source = "10,,"
+        resultado = evaluar(source)
+        self.assertEqual("[10]", str(resultado))
+
+    def test_op_coma_map(self):
+        reset()
+        source = "10,{3%},"
+        resultado = evaluar(source)
+        self.assertEqual("[[1 2 4 5 7 8]]", str(resultado))
+
+    def test_or(self):
+        reset()
+        source = "5 3|"
+        resultado = evaluar(source)
+        self.assertEqual("[7]", str(resultado))

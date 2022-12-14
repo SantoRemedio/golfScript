@@ -43,7 +43,7 @@ def gs_subtract(stack):
                 lista.append(elemento)
         resta = Array(lista)
     else:
-        raise ValueError("Error en gs_subtract: tipo de dato invalido {type(a)}")
+        raise ValueError("gs_subtract: Tipo de dato erroneo")
 
     stack.append(resta)
 
@@ -89,13 +89,45 @@ def gs_multiply(stack):
             stack.append(Integer(ord(letra)))
         for _ in range(len(sig.name) - 1):
             evaluar(top)
+    else:
+        raise ValueError("gs_multiply: Tipo de dato erroneo")
 
 
 def gs_div(stack):
     a = stack.pop()
     b = stack.pop()
-    div = b // a
-    stack.append(div)
+
+    if isinstance(a, Integer) and isinstance(b, Integer):
+        #   1 / 2
+        div = b // a
+        stack.append(div)
+    elif isinstance(a, Integer) and isinstance(b, Array):
+        #  [1 2 3 4 5] 2 / => [[1 2] [3 4] [5]]
+        lista = b.name
+        tamano = int(a)
+        nva = []
+        for i in range(0, len(lista), tamano):
+            nva.append(Array(lista[i:i + tamano]))
+        stack.append(Array(nva))
+    elif isinstance(a, Block) and isinstance(b, Block):
+        from evaluador import evaluar
+        accion = a
+        condicion = b
+        lista = []
+        while True:
+            gs_dup(stack)
+            evaluar(condicion)
+            top = stack.pop()
+            val = 1 if top else 0
+            if top:
+#                stack.append(top)
+                evaluar(accion)
+                top = stack.pop()
+                lista.append(top)
+            else:
+                break
+        nvo = Array(lista)
+        stack.append(nvo)
 
 
 def gs_power(stack):
@@ -111,6 +143,15 @@ def gs_power(stack):
         except ValueError:
             stack.append(menos_uno)
 
+def gs_or(stack):
+    a = stack.pop()
+    b = stack.pop()
+
+    if isinstance(a, Integer) and isinstance(b, Integer):
+        c = int(a) | int(b)
+        stack.append(Integer(c))
+    else:
+        raise ValueError("gs_or: Tipo de dato erroneo")
 
 def gs_dec_1(stack):
     elemento = stack.pop()
@@ -127,7 +168,7 @@ def gs_dec_1(stack):
         stack.append(Array(elemento.name[1:]))
         stack.append(elemento.name[0])
     else:
-        raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
+        raise ValueError(f"Eror en gs_dec_1: Tipo de dato erroneo")
 
 
 def gs_inc_1(stack):
@@ -145,7 +186,7 @@ def gs_inc_1(stack):
         stack.append(Array(elemento.name[:-1]))
         stack.append(elemento.name[-1])
     else:
-        raise ValueError(f"Eror en gs_dec_1: Tipo desconocido {type(elemento)}")
+        raise ValueError(f"Eror en gs_dec_1: Tipo de dato erroneo")
 
 
 def gs_chancho(stack):
@@ -163,7 +204,7 @@ def gs_chancho(stack):
     elif isinstance(elemento, Array):
         stack.extend(elemento.name)
     else:
-        raise ValueError(f"Error en gs_chancho: elemento desconocido {elemento}")
+        raise ValueError(f"gs_chancho: Tipo de dato erroneo")
 
 
 def gs_pop(stack):
@@ -200,10 +241,9 @@ def gs_dup_n(stack):
             nvo = sorted(top.name)
             stack.append(Array(nvo))
         except Exception as e:
-            print("Error: {e}")
+            print(f"Error: {e}")
     else:
-        raise ValueError("gs_dup_n: Tipo desconocido")
-
+        raise ValueError("gs_dup_n: Tipo de dato erroneo")
 
 
 def gs_dup(stack):
@@ -212,11 +252,11 @@ def gs_dup(stack):
 
 def gs_rotate(stack):
     #   Rota los tres elementos al tope del stack
-    #   A B C -> B C A 3
+    #   A B C @ -> B C A
     if len(stack) > 2:
         stack[-1], stack[-2], stack[-3] = stack[-3], stack[-1], stack[-2]
     else:
-        raise ValueError("Error en rotate")
+        raise ValueError("gs_rotate: stack tiene menos de 3 elementos")
 
 
 def gs_swap(stack):
@@ -224,13 +264,17 @@ def gs_swap(stack):
     if len(stack) > 1:
         stack[-1], stack[-2] = stack[-2], stack[-1]
     else:
-        raise ValueError("Error en swap")
+        raise ValueError("gs_swap: stack tiene menos de dos elementos")
 
 
 def gs_module(stack):
     a = stack.pop()
     b = stack.pop()
-    stack.append(b % a)
+    if isinstance(a, Integer) and isinstance(b, Integer):
+        nvo = b % a
+        stack.append(nvo)
+    else:
+        raise ValueError("gs_module: Tipo dato erroneo")
 
 
 def gs_not(stack):
@@ -242,6 +286,7 @@ def gs_repr(stack):
     elemento = stack.pop()
     a = String(str(elemento))
     stack.append(a)
+
 
 def gs_greater(stack):
     top = stack.pop()
@@ -368,6 +413,32 @@ def gs_until(stack):
             evaluar(bloque_ejecutar)
 
 
+def gs_size(stack):
+    from evaluador import evaluar
+    a = stack.pop()
+
+    if isinstance(a, Integer):
+        lista = [Integer(x) for x in range(int(a))]
+        nvo = Array(lista)
+        stack.append(nvo)
+    elif isinstance(a, Array):
+        nvo = Integer(len(a))
+        stack.append(nvo)
+    elif isinstance(a, Block):
+        b = stack.pop()
+        lista = []
+        for elemento in b:
+            stack.append(elemento)
+            evaluar(a)
+            val = stack.pop()
+            if val:
+                lista.append(elemento)
+        nvo = Array(lista)
+        stack.append(nvo)
+    else:
+        raise ValueError("gs_size: Tipo de datos erroneo")
+
+
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
 variables = {}
@@ -379,7 +450,6 @@ def reset_variables():
     variables = {
         Var('+'): gs_sum,
         Var(';'): gs_pop,
-        Var('+'): gs_sum,
         Var('-'): gs_subtract,
         Var('*'): gs_multiply,
         Var('/'): gs_div,
@@ -398,6 +468,8 @@ def reset_variables():
         Var('<'): gs_less,
         Var('^'): gs_bitwise_xor,
         Var('&'): gs_bitwise_and,
+        Var(','): gs_size,
+        Var('|'): gs_or,
         Var('if'): gs_if,
         Var('do'): gs_do,
         Var('while'): gs_while,

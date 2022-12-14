@@ -91,33 +91,6 @@ def evaluar(source_code):
     return stack
 
 
-def lexer(source):
-    #   Divide el programa fuente en palabras.
-    #   Funcion generadora; marca de fin es None
-    for linea in source.split('\n'):
-        for parte in patron.findall(linea):
-            if parte[0] == "#":  # El resto es comentario
-                continue
-            elif parte[0] in "'\"" :    # Acepta string delimitados con comillas simples y dobles
-                #   Convierte enteros y strings a medida
-                #   que los encuentra.
-                word = String(parte[1:-1])
-            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
-                word = Integer(int(parte))
-            elif parte[0] not in '[]{}':
-                word = Var(parte)
-                if word not in variables:
-                    variables[word] = None
-            else:
-                #   Algunos palabras se entregan como texto, ya
-                #   que son entidades complejas.
-                #   Incluyen los []{}
-                word = parte
-
-            yield word
-    yield None
-
-
 def tokenizar(pgma):
     #  Recibe las partes elementales del pgma y los
     #  convierte a los tipos adecuados
@@ -165,6 +138,32 @@ def tokenizar(pgma):
         word = next(source)
 
 
+def lexer(source):
+    #   Divide el programa fuente en palabras.
+    #   Funcion generadora; marca de fin es None
+    for linea in source.split('\n'):
+        for parte in patron.findall(linea):
+            if parte[0] == "#":  # El resto es comentario
+                continue
+            elif parte[0] in "'\"" :    # Acepta string delimitados con comillas simples y dobles
+                #   Convierte enteros y strings a medida
+                #   que los encuentra.
+                word = String(parte[1:-1])
+            elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
+                word = Integer(int(parte))
+            elif parte[0] not in '[]{}':
+                word = Var(parte)
+                if word not in variables:
+                    variables[word] = None
+            else:
+                #   Algunos palabras se entregan como texto, ya
+                #   que son entidades complejas.
+                #   Incluyen los []{}
+                word = parte
+
+            yield word
+    yield None
+
 def reset():
     #
     #   Reinicia el estado para permitir la correcta
@@ -176,3 +175,4 @@ def reset():
     stack.reset()
     reset_variables()
     modo_debug = False
+

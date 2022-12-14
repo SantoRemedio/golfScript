@@ -43,6 +43,9 @@ class GSType:
     def __hash__(self):
         return hash(self.name)
 
+    def __bool__(self):
+        raise ValueError("Tipo de dato no tiene __bool__()")
+
 
 class Var(GSType):
     #   Contiene el nombre de una variable.
@@ -254,7 +257,10 @@ class Array(GSType):
         raise ValueError(f"Error en Array.coerse: precedencia invalida {precedence}")
 
     def append(self, elemento):
-        self.name.append(elemento)
+        if issubclass(type(elemento), GSType):
+            self.name.append(elemento)
+        else:
+            raise ValueError("append: Tipo no valido")
 
     def extend(self, lista):
         self.name.extend(lista)
@@ -305,9 +311,9 @@ class Array(GSType):
         return Array(lista)
 
 
-cero = Var(0)
-uno = Var(1)
-menos_uno = Var(-1)
+cero = Integer(0)
+uno = Integer(1)
+menos_uno = Integer(-1)
 colon = Var(':')
 start_block = Var('{')
 end_block = Var('}')
