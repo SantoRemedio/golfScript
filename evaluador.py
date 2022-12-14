@@ -26,7 +26,7 @@ import types
 #   Este es el patrón oficial para reconoce golfScript
 patron = re.compile(
     r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|\"(?:\\.|[^\"])*\"?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
-# |"(?:\\.|[^"])*"?|-?[0-9]+|)
+
 
 #
 # El stack del script.
@@ -106,9 +106,9 @@ def tokenizar(pgma):
         # un token.
         token = None
 
-        if word == '{':
+        if word == '{': # Inicio de un bloque
             stack_contenedores.append(Block([]))
-        elif word == '[':
+        elif word == '[': # Inicio de un array
             stack_contenedores.append(Array([]))
         elif not issubclass(type(word), GSType) and word in '}]':
             #   Se termino el contenedor, que quedó al tope del stack
@@ -125,7 +125,7 @@ def tokenizar(pgma):
             #   estamos leyendo elementos de una lista.
             stack_contenedores[-1].append(word)
         else:
-            #   Fuera de una lista.
+            #   Fuera de un contenedor
             token = word
 
         if token is not None:
@@ -150,6 +150,7 @@ def lexer(source):
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
             elif parte[0] not in '[]{}':
+                #   Los nombres de variable se registran de inmediato.
                 word = Var(parte)
                 if word not in variables:
                     variables[word] = None

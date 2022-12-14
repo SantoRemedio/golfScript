@@ -321,6 +321,9 @@ def gs_until(stack):
             evaluar(bloque_ejecutar)
 
 
+def gs_print(stack):
+    a = stack.pop()
+    print(str(a),end='')
 
 
 # El diccionario variables contiene las definiciones de
@@ -359,6 +362,7 @@ def reset_variables():
         Var('do'): gs_do,
         Var('while'): gs_while,
         Var('until'): gs_until,
+        Var('print'): gs_print,
     }
 
 
