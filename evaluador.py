@@ -19,7 +19,7 @@
 
 import re
 
-from tipos import Block, Var, Integer, String, Array, colon
+from tipos import Block, Var, Integer, String, Array, colon, GSType
 from operaciones import variables, reset_variables
 import types
 
@@ -91,50 +91,46 @@ def evaluar(source_code):
             print(f"Fuente:  {source_code}")
     return stack
 
+
 def tokenizar(pgma):
     #  Recibe las partes elementales del pgma y los
     #  convierte a los tipos adecuados
-    stack_listas = []
+
+    stack_contenedores = []
+
     source = lexer(pgma)
     word = next(source)
+
     while word is not None:
         # Examina un word e intenta convertirlo en
         # un token.
         token = None
 
         if word == '{':
-            #   Comienza un bloque;
-            #   Bloque se lee completo aquí
-            block = []
-            word = next(source)
-            while word != '}':
-                block.append(word)
-                word = next(source)
-            token = Block(block)
+            stack_contenedores.append(Block([]))
         elif word == '[':
-            #   Comienza una nueva lista, posiblemente anidad
-            #   Partimos con una lista vacia agregada en el stack
-            stack_listas.append([])
-        elif word == ']':
-            #   Se termino la lista, que quedó al tope del stack
-            if len(stack_listas) == 1:
-                #   Esta es una lista de primer nivel.
-                token = Array(stack_listas.pop())
+            stack_contenedores.append(Array([]))
+        elif not issubclass(type(word), GSType) and word in '}]':
+            #   Se termino el contenedor, que quedó al tope del stack
+            if len(stack_contenedores) == 1:
+                #   Esta es contenedor de primer nivel
+                token = stack_contenedores.pop()
             else:
-                #   Esta es una sublista.
-                #   Agregarla como elemento en la lista superior.
-                sublista = stack_listas.pop()
-                stack_listas[-1].append(Array(sublista))
-        elif stack_listas:
+                #   Este es un subcontenedor.
+                #   Agregarlo como elemento en el contenedor superior.
+                sub = stack_contenedores.pop()
+                stack_contenedores[-1].append(sub)
+        elif stack_contenedores:
             #   Si el stack_lista no está vacio, entonces
             #   estamos leyendo elementos de una lista.
-            stack_listas[-1].append(word)
+            stack_contenedores[-1].append(word)
         else:
             #   Fuera de una lista.
             token = word
 
         if token is not None:
             yield token
+
         word = next(source)
 
 

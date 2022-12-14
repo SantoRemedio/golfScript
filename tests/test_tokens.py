@@ -142,3 +142,8 @@ class TestBasico(unittest.TestCase):
         c = a & b
         self.assertEqual('["a"]', str(c))
 
+    def test_refactoring(self):
+        reset()
+        source = "1 2 3"
+        lista = Array([x for x in tokenizar(source)])
+        print(lista)

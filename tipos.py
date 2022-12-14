@@ -187,6 +187,9 @@ class Block(GSType):
     def coerce(self, precedence):
         return self
 
+    def append(self, elemento):
+        self.name.append(elemento)
+
     def __add__(self, other):
         block = self.name + other.name
         return Block(block)
