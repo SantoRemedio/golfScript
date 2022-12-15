@@ -540,3 +540,10 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluar(source)
         print(resultado)
+
+    def test_array_formation(self):
+        reset()
+        source="1 2 [\]"
+
+        resultado = evaluar(source)
+        self.assertEqual("[[2 1]]", str(resultado))

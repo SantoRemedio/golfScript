@@ -23,13 +23,13 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "[1 2 3]"
         resultado = [x for x in tokenizar(source)]
-        self.assertEqual("[[1 2 3]]", str(resultado))
+        self.assertEqual("[[, 1, 2, 3, ]]", str(resultado))
 
     def test_listas(self):
         reset()
         source = "[1 2 [4 5] 3]"
         resultado = [x for x in tokenizar(source)]
-        self.assertEqual("[[1 2 [4 5] 3]]", str(resultado))
+        self.assertEqual("[[, 1, 2, [, 4, 5, ], 3, ]]", str(resultado))
 
     def test_variables(self):
         reset()
@@ -54,25 +54,25 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "[1 2 3]"
         resultado = [x for x in tokenizar(source)]
-        self.assertEqual("[[1 2 3]]", str(resultado))
+        self.assertEqual("[[, 1, 2, 3, ]]", str(resultado))
 
     def test_lista3(self):
         reset()
         source = "[1 2 3]~"
         resultado = [x for x in tokenizar(source)]
-        self.assertEqual("[[1 2 3], ~]", str(resultado))
+        self.assertEqual("[[, 1, 2, 3, ], ~]", str(resultado))
 
     def test_lista1(self):
         reset()
         source = "[1 2 3]~"
-        resultado = Array([x for x in lexer(source)])
-        self.assertEqual("[[ 1 2 3 ] ~ None]", str(resultado))
+        resultado = [x for x in lexer(source)]
+        self.assertEqual("[[, 1, 2, 3, ], ~, None]", str(resultado))
 
     def test_list_empty(self):
         reset()
         source = "[]!"
-        resultado = Array([x for x in tokenizar(source)])
-        self.assertEqual("[[] !]", str(resultado))
+        resultado = [x for x in tokenizar(source)]
+        self.assertEqual("[[, ], !]", str(resultado))
 
     def test_cero(self):
         reset()

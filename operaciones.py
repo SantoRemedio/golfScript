@@ -445,6 +445,28 @@ def gs_zip(stack):
 
     stack.append(final)
 
+def gs_close(stack):
+    #
+    #     obj1 obj2 ... objn ]
+    #     ^
+    #     +--- marked == True
+    #
+    #   Coloca todos los objetos en un arreglo
+    lista = []
+    marked = False
+    while not marked and stack.name:
+        obj = stack.pop()
+        marked = obj.marked
+        obj.marked = False
+        lista.append(obj)
+    #
+    #   La marca [ ya se consumio
+    #
+    if stack.name:
+        stack.name[-1].marked = False
+    stack.append(Array(lista[::-1]))
+
+
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
 variables = {}
@@ -477,6 +499,8 @@ def reset_variables():
         Var('&'): gs_bitwise_and,
         Var(','): gs_size,
         Var('|'): gs_or,
+        Var('['): String('['),
+        Var(']'): gs_close,
         Var('if'): gs_if,
         Var('do'): gs_do,
         Var('while'): gs_while,

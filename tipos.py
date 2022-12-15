@@ -27,8 +27,14 @@ import uuid
 
 class GSType:
     #   Tipo base, no se usa por si solo.
+    #
+    #   El atributo marked se usa para indicar
+    #   un "[" virtual en el stack. El objeto
+    #   que tiene marked == True es el primero
+    #   de la lista.
     def __init__(self, name):
         self.name = name
+        self.marked = False
 
     def coerse(self, precedence):
         #   Cada tipo de dato debe ser capaz de

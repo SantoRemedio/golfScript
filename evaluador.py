@@ -19,7 +19,8 @@
 
 import re
 
-from tipos import Block, Var, Integer, String, Array, colon, GSType
+from tipos import Block, Var, Integer, String, colon, GSType
+from stack import Stack
 from operaciones import variables, reset_variables
 import types
 
@@ -34,7 +35,7 @@ patron = re.compile(
 # En todas las representaciones del divisor, el tope estará a la derecha
 # El divisor siempre contendra exclusivamente Integer, String, Array y Block.
 #
-stack = Array([])
+stack = Stack([])
 
 def evaluar(source_code, modo_debug=False):
     #   Recibe un código a ejecutar:
@@ -43,6 +44,10 @@ def evaluar(source_code, modo_debug=False):
     #   - Escalares
     #   El código puede venir como string (formato fuente)
     #   o ya tokenizado.
+
+    #   marked señala que entre este objeto y el anterior en
+    #   el stack hay un "["
+    marked = False
 
     if isinstance(source_code, str):
         source = tokenizar(source_code)
@@ -62,8 +67,12 @@ def evaluar(source_code, modo_debug=False):
             break
 
         try:
+            elemento.marked = marked
+            marked = False
             if elemento == colon:  # 1:a  Asigna el valor 1 a la variable a
                 pass  # Esperar lo que viene después
+            elif elemento == Var("["):
+                marked = True
             elif elemento_prev == colon:
                 #   elemento es el nombre de la variable.
                 variables[elemento] = stack[-1]  # Extraer valor del divisor sin modificarlo
@@ -104,9 +113,7 @@ def tokenizar(pgma):
 
         if word == '{': # Inicio de un bloque
             stack_contenedores.append(Block([]))
-        elif word == '[': # Inicio de un array
-            stack_contenedores.append(Array([]))
-        elif not issubclass(type(word), GSType) and word in '}]':
+        elif not issubclass(type(word), GSType) and word == '}':
             #   Se termino el contenedor, que quedó al tope del divisor
             if len(stack_contenedores) == 1:
                 #   Esta es contenedor de primer nivel
@@ -148,7 +155,7 @@ def lexer(source):
                     word = String(parte[1:-1])
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
-            elif parte[0] not in '[]{}':
+            elif parte[0] not in '{}':
                 #   Los nombres de variable se registran de inmediato.
                 word = Var(parte)
                 if word not in variables:
@@ -156,7 +163,7 @@ def lexer(source):
             else:
                 #   Algunos palabras se entregan como texto, ya
                 #   que son entidades complejas.
-                #   Incluyen los []{}
+                #   Incluyen los {}
                 word = parte
 
             yield word
@@ -175,6 +182,7 @@ def reset():
 
     #   Operadores definidos en base a golfScript
     #   (mejor sería cargarlos de un archivo ...)
+    #evaluar("[1 1 0] 2 base")
     evaluar("{1$if }:and;")
     evaluar(r"{1$\if }:or;")
     evaluar(r"{\!!{!} *}:xor;")
