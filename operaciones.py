@@ -337,6 +337,24 @@ def gs_abs(stack):
         a = -a
     stack.append(Integer(a))
 
+def gs_base(stack):
+    #
+    #   valor_a_convertir base_ocupar base
+    #
+    #   Produce una lista de valores enteros B[]
+    #   con la representación del valor en el sistema
+    #   posicional de base_ocupar.
+    #
+    base = int(stack.pop())
+    valor = int(stack.pop())
+
+    lista = []
+    while valor >= base:
+        valor, resto = divmod(valor, base)
+        lista.append(resto)
+    if valor:
+        lista.append(valor)
+    stack.append(Array(lista[::-1]))
 
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
@@ -377,6 +395,7 @@ def reset_variables():
         Var('print'): gs_print,
         Var('random'): gs_random,
         Var('abs'): gs_abs,
+        Var('base'): gs_base,
     }
 
 
