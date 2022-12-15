@@ -243,12 +243,20 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('[[4 4 4]]', str(resultado))
 
-    def test_xor_logico(self):
+    def test_xor_logico_true(self):
         reset()
-        source = "0 [3] xor"
+        source = "0[3] xor"
 
         resultado = evaluar(source)
         self.assertEqual('[[3]]', str(resultado))
+
+    def test_xor_logico_false(self):
+        reset()
+        source = "1 [3] xor"
+
+        resultado = evaluar(source)
+        self.assertEqual('[0]', str(resultado))
+
 
     def test_mult_string_string(self):
         reset()
@@ -431,12 +439,6 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('[[[1 2] [3 4] [5]]]', str(resultado))
 
-    def test_div_2(self):
-        reset()
-        source = "0 1 {100<} { .@+ } /"
-        resultado = evaluar(source)
-        self.assertEqual('[]', str(resultado))
-
     def test_evaluar_condicion(self):
         reset()
         source = "1 100 <"
@@ -484,3 +486,57 @@ class TestBasico(unittest.TestCase):
         source = "[ 0 1 2 3 4 5 3 2 3 6] [2 3]/"
         resultado = evaluar(source)
         self.assertEqual("[[[0 1] [4 5 3] [6]]]", str(resultado))
+
+    def test_zip(self):
+        reset()
+        source = "[[1 2 3][4 5 6][7 8 9]]zip"
+        resultado = evaluar(source)
+        self.assertEqual("[[[1 4 7] [2 5 8] [3 6 9]]]", str(resultado))
+
+    def test_div_array_bloque(self):
+        reset()
+        source = "[1 2 3]{1+}/"
+        resultado = evaluar(source)
+        self.assertEqual("[2 3 4]", str(resultado))
+
+    def test_mod_str_str(self):
+        reset()
+        source = "'assdfs' 's'% "
+        resultado = evaluar(source)
+        self.assertEqual('[["a" "df"]]', str(resultado))
+
+    def test_redefinir(self):
+        reset()
+        source = "1:0;0"
+
+        resultado = evaluar(source)
+        self.assertEqual("[1]", str(resultado))
+
+    def test_zip_strings(self):
+        reset()
+        source="['asdf''1234']zip"
+
+        resultado = evaluar(source)
+        self.assertEqual('[["a1" "s2" "d3" "f4"]]', str(resultado))
+
+    def test_zip_strings3(self):
+        reset()
+        source="['abcd' 'efgh' 'klkd']zip"
+
+        resultado = evaluar(source)
+        self.assertEqual('[["aek" "bfl" "cgk" "dhd"]]', str(resultado))
+
+
+    def test_zip_arrays(self):
+        reset()
+        source="[[1 2 3][4 5 6][7 8 9]]zip"
+
+        resultado = evaluar(source)
+        self.assertEqual('[[[1 4 7] [2 5 8] [3 6 9]]]', str(resultado))
+
+    def test_random(self):
+        reset()
+        source="10rand"
+
+        resultado = evaluar(source)
+        print(resultado)

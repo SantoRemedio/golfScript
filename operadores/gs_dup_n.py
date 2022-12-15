@@ -14,8 +14,8 @@
 from tipos import Integer, Block, Array, String
 
 def gs_dup_n(stack):
-    #   Duplica en n-esimo elemento del stack (index 0).
-    #   n se saca del stack.
+    #   Duplica en n-esimo elemento del divisor (index 0).
+    #   n se saca del divisor.
     top = stack.pop()
 
     if isinstance(top, Integer):

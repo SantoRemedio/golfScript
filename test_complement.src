@@ -3,3 +3,6 @@
 32 16 base -> [2 0]
 10 16 base -> [10]
 16 16 base -> [1 0]
+10 2 base 2 base -> 10
+64 16 base 16 base -> 64
+['abcd' 'efgh' 'klkd']zip -> ["aek" "bfl" "cgk" "dhd"]

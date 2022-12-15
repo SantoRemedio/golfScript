@@ -55,18 +55,43 @@ def gs_subtract(stack):
 
 
 def gs_power(stack):
-    a = stack.pop()
-    b = stack.pop()
-    if isinstance(a, Integer) and isinstance(b, Integer):
-        power = b ** a
+    potencia = stack.pop()
+    base = stack.pop()
+
+    valido = True
+
+    if isinstance(potencia, Integer) and isinstance(base, Integer):
+        power = base ** potencia
         stack.append(power)
-    elif isinstance(a, Array):
+    elif isinstance(potencia, Array):
+        #   [6 7][1 2 3 [6 7]]? No parece estar bien implementado
+        #   en el interprete original, que retorna -1 en lugar de 4.
         try:
-            index = a.name.index(b)
+            index = potencia.name.index(base)
             stack.append(Integer(index))
         except ValueError:
             stack.append(menos_uno)
+    elif isinstance(potencia, Block) and isinstance(base, Array):
+        from evaluador import evaluar
+        #   Buscar el primer indice que satisface la
+        #   condición dada en el bloque
+        idx = 1  # Indices son base 1 en golfScript
+        for elemento in base.name:
+            stack.append(elemento)
+            evaluar(potencia)
+            cond = stack.pop()
+            if cond:
+                break
+            idx += 1
+        #   Si se encontro, colocar el indice en el stack.
+        #   Si no, no dejar nada
+        if idx < len(base.name):
+            stack.append(Integer(idx))
+    else:
+        valido = False
 
+    if not valido:
+        raise ValueError("Error en gs_module: Tipo de dato erroneo")
 
 def gs_or(stack):
     a = stack.pop()
@@ -141,29 +166,52 @@ def gs_pop(stack):
 
 
 def gs_rotate(stack):
-    #   Rota los tres elementos al tope del stack
+    #   Rota los tres elementos al tope del divisor
     #   A B C @ -> B C A
     if len(stack) > 2:
         stack[-1], stack[-2], stack[-3] = stack[-3], stack[-1], stack[-2]
     else:
-        raise ValueError("gs_rotate: stack tiene menos de 3 elementos")
+        raise ValueError("gs_rotate: divisor tiene menos de 3 elementos")
 
 
 def gs_swap(stack):
-    #   Intercambia los dos elementos al tope del stack
+    #   Intercambia los dos elementos al tope del divisor
     if len(stack) > 1:
         stack[-1], stack[-2] = stack[-2], stack[-1]
     else:
-        raise ValueError("gs_swap: stack tiene menos de dos elementos")
+        raise ValueError("gs_swap: divisor tiene menos de dos elementos")
 
 
 def gs_module(stack):
-    a = stack.pop()
-    b = stack.pop()
-    if isinstance(a, Integer) and isinstance(b, Integer):
-        nvo = b % a
-        stack.append(nvo)
-    else:
+    base = stack.pop()
+    valor = stack.pop()
+
+    valido = True
+
+    if isinstance(base, Integer):
+        if isinstance(valor, Integer):
+            nvo = valor % base
+            stack.append(nvo)
+        elif isinstance(valor, Array):
+            paso = int(base)
+            nvo = Array(valor.name[::paso])
+            stack.append(nvo)
+        else:
+            valido = False
+    elif isinstance(base, String) and isinstance(valor, String):
+        lista = [String(x) for x in valor.name.split(base.name) if x]
+        stack.append(Array(lista))
+    elif isinstance(base, Block) and isinstance(valor, Array):
+        from evaluador import evaluar
+        stack_start = len(stack.name)
+        for elemento in valor.name:
+            stack.append(elemento)
+            evaluar(base)
+        resultado = Array(stack.name[stack_start:])
+        stack.name = stack.name[:stack_start]
+        stack.append(resultado)
+
+    if not valido:
         raise ValueError("gs_module: Tipo dato erroneo")
 
 
@@ -181,6 +229,7 @@ def gs_repr(stack):
 def gs_greater(stack):
     top = stack.pop()
     sig = stack.pop()
+
     if type(top) == type(sig):
         stack.append(uno if sig > top else cero)
     elif isinstance(top, Integer) and isinstance(sig, String):
@@ -227,7 +276,7 @@ def gs_equal(stack):
             stack.append(val)
         except IndexError:
             #   Si el indice está fuera de rango, no
-            #   poner nada en el stack.
+            #   poner nada en el divisor.
             pass
 
 
@@ -266,7 +315,7 @@ def gs_do(stack):
     #
     #   elemento bloque do
     #
-    # Ejecuta el bloque, saca tope del stack; si
+    # Ejecuta el bloque, saca tope del divisor; si
     # es true, sigue.
     from evaluador import evaluar
 
@@ -282,7 +331,7 @@ def gs_while(stack):
     #
     #   elemento bloque-ejecutar bloque-condicion while
     #
-    # Ejecuta el bloque-condicion y saca un valor del stack.
+    # Ejecuta el bloque-condicion y saca un valor del divisor.
     # Si es True, ejecuta el bloque-ejecutar.
     # Si es False, reinserta valor y termina
     from evaluador import evaluar
@@ -303,7 +352,7 @@ def gs_until(stack):
     #
     #   elemento bloque-ejecutar bloque-condicion until
     #
-    # Ejecuta el bloque-condicion y saca un valor del stack.
+    # Ejecuta el bloque-condicion y saca un valor del divisor.
     # Si es True, ejecuta el bloque-ejecutar.
     # Si es False, reinserta valor y termina
     from evaluador import evaluar
@@ -345,16 +394,56 @@ def gs_base(stack):
     #   con la representación del valor en el sistema
     #   posicional de base_ocupar.
     #
-    base = int(stack.pop())
-    valor = int(stack.pop())
+    #   lista base_ocupar base
+    #
+    #   Convierte lista a decimal
+    #
+    top = stack.pop()
+    sig = stack.pop()
 
-    lista = []
-    while valor >= base:
-        valor, resto = divmod(valor, base)
-        lista.append(resto)
-    if valor:
-        lista.append(valor)
-    stack.append(Array(lista[::-1]))
+    base = int(top)
+    if isinstance(sig, Integer):
+        #   Convertir un entero en una lista de factores
+        valor = int(sig)
+
+        lista = []
+        while valor >= base:
+            valor, resto = divmod(valor, base)
+            lista.append(resto)
+        if valor:
+            lista.append(valor)
+        stack.append(Array(lista[::-1]))
+    elif isinstance(sig, Array):
+        #   Convertir una lista de factores a decimal
+        dec = 0
+        potencia = 1
+        for factor in sig.name[::-1]:
+            dec += int(factor) * potencia
+            potencia *= base
+        stack.append(Integer(dec))
+
+def gs_zip(stack):
+    original = stack.pop()
+    matriz = []
+    tipo = original.name[0]
+    for fila in original.name:
+        matriz.append(fila.name)
+
+    final = Array([])
+
+    if isinstance(tipo, String):
+        transpose = [''.join(a) for a in zip(*matriz)]
+        for sublista in transpose:
+            final.append(String(sublista))
+
+    elif isinstance(tipo, Array):
+        transpose = [a for a in zip(*matriz)]
+        for sublista in transpose:
+            final.append(Array(sublista))
+    else:
+        raise ValueError("Error: tipo de dato erroneo")
+
+    stack.append(final)
 
 # El diccionario variables contiene las definiciones de
 # operadores y los valores de las variables.
@@ -396,6 +485,7 @@ def reset_variables():
         Var('random'): gs_random,
         Var('abs'): gs_abs,
         Var('base'): gs_base,
+        Var('zip'): gs_zip,
     }
 
 

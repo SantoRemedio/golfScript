@@ -17,6 +17,7 @@ with open(archivo, "r") as tests:
         if linea.startswith('#'):
             continue
 
+        reset()
         i += 1
         pgma, resultado = linea.strip().split("->")
         resultado = resultado.strip()

@@ -4,7 +4,7 @@
 #   Este es el módulo principal del interprete.
 
 #   La función evaluar() recibe un programa en código
-#   fuente u otro formato, y lo ejecuta contra un stack
+#   fuente u otro formato, y lo ejecuta contra un divisor
 #   y tabla de valores permanentes, para poder ejecutar
 #   programas en sucesión
 #
@@ -29,19 +29,14 @@ patron = re.compile(
 
 
 #
-# El stack del script.
-# El tope del stack está a la derecha (indice mayor).
-# En todas las representaciones del stack, el tope estará a la derecha
-# El stack siempre contendra exclusivamente Integer, String, Array y Block.
+# El divisor del script.
+# El tope del divisor está a la derecha (indice mayor).
+# En todas las representaciones del divisor, el tope estará a la derecha
+# El divisor siempre contendra exclusivamente Integer, String, Array y Block.
 #
 stack = Array([])
-#
-# en debug se imprime el stack y el elemento por cada elemento en el stream
-#
-modo_debug = False
 
-
-def evaluar(source_code):
+def evaluar(source_code, modo_debug=False):
     #   Recibe un código a ejecutar:
     #   - Codigo fuente.
     #   - Iterables
@@ -69,18 +64,19 @@ def evaluar(source_code):
         try:
             if elemento == colon:  # 1:a  Asigna el valor 1 a la variable a
                 pass  # Esperar lo que viene después
+            elif elemento_prev == colon:
+                #   elemento es el nombre de la variable.
+                variables[elemento] = stack[-1]  # Extraer valor del divisor sin modificarlo
             elif elemento in variables:
-                if elemento_prev == colon:
-                    variables[elemento] = stack[-1]  # Extraer valor del stack sin modificarlo
-                elif isinstance(variables[elemento], types.FunctionType):
+                if isinstance(variables[elemento], types.FunctionType):
                     variables[elemento](stack)  # Ejecutar un operador definido por una función
                 elif isinstance(variables[elemento], Block):
                     evaluar(variables[elemento].name)  # Ejecutar el bloque completo.
                 else:
-                    #  Colocar en el stack el valor de la variable.
+                    #  Colocar en el divisor el valor de la variable.
                     stack.append(variables[elemento])
             else:
-                #   Cualquier otra cosa, al stack
+                #   Cualquier otra cosa, al divisor
                 stack.append(elemento)
 
             elemento_prev = elemento
@@ -111,7 +107,7 @@ def tokenizar(pgma):
         elif word == '[': # Inicio de un array
             stack_contenedores.append(Array([]))
         elif not issubclass(type(word), GSType) and word in '}]':
-            #   Se termino el contenedor, que quedó al tope del stack
+            #   Se termino el contenedor, que quedó al tope del divisor
             if len(stack_contenedores) == 1:
                 #   Esta es contenedor de primer nivel
                 token = stack_contenedores.pop()
@@ -173,11 +169,9 @@ def reset():
     #   ejecución de los tests unitarios.
     #
     global stack
-    global modo_debug
 
     stack.reset()
     reset_variables()
-    modo_debug = False
 
     #   Operadores definidos en base a golfScript
     #   (mejor sería cargarlos de un archivo ...)

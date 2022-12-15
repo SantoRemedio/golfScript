@@ -1,6 +1,6 @@
 # Operator .
 # args: 1
-# Duplicate top of stack.
+# Duplicate top of divisor.
 #
 # 1 2 3. -> 1 2 3 3
 

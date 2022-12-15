@@ -2,10 +2,11 @@
 #   REPL del interprete de golfScript
 #
 import sys
-from evaluador import evaluar, reset, variables, modo_debug, stack
+from evaluador import evaluar, reset, variables, stack
 from tipos import Var
 
 if __name__ == '__main__':
+    modo_debug = False
     reset()
     
     print("Interprete golfScript 0.1 - Dic/2022 - Candid Moe")
@@ -23,7 +24,7 @@ if __name__ == '__main__':
         try:
             if pgma == "help":
                 print("reset: reinicia el interprete")
-                print("clear: limpia el stack")
+                print("clear: limpia el divisor")
                 print("vars: muestra la tabla de variables")
                 print("inspect x: muestra valor de x")
                 print("debug: entra/sale de debug")
@@ -44,7 +45,7 @@ if __name__ == '__main__':
                 _, nombre = pgma.split()
                 print(f"{nombre}={variables[Var(nombre)]}")
             else:
-                print(evaluar(pgma))
+                print(evaluar(pgma, modo_debug))
             pgma = input(">")
         except KeyboardInterrupt:
             break

@@ -37,3 +37,32 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluar(source)
         self.assertEqual("[82]", str(resultado))
+
+    def test_xx(self):
+        reset()
+        source = r"0 1 {100<} { .@+ } /"
+
+        resultado = evaluar(source)
+        self.assertEqual("[89 [1 1 2 3 5 8 13 21 34 55 89]]", str(resultado))
+
+    def test_mod_array_block(self):
+        reset()
+        source = "[1 2 3]{.}%"
+
+        resultado = evaluar(source)
+        self.assertEqual("[[1 1 2 2 3 3]]", str(resultado))
+
+    def test_pow(self):
+        reset()
+        source = "[1 2 3 4 5 6] {.* 20>} ?"
+
+        resultado = evaluar(source)
+        self.assertEqual("[5]", str(resultado))
+
+    def test_if(self):
+        reset()
+        source = "0 2 {1.} if"
+
+        resultado = evaluar(source)
+        self.assertEqual("[1 1]", str(resultado))
+

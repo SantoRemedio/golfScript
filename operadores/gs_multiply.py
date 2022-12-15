@@ -28,7 +28,7 @@
 # [1 2 3 4]{+}* -> 10
 # 'asdf'{+}* -> 414
 
-from tipos import Integer, Block, Array, String
+from tipos import Integer, Block, Array, String, GSType
 
 def gs_multiply(stack):
     from evaluador import evaluar
@@ -89,8 +89,13 @@ def gs_multiply(stack):
                 stack.append(Integer(ord(letra)))
             for _ in range(len(sig.name) - 1):
                 evaluar(top)
+        elif issubclass(type(sig), GSType):
+            # Para Integer y String, aplicar el bloque.
+            evaluar(top)
         else:
             valido = False
+    else:
+        valido = False
 
     if not valido:
         raise ValueError("gs_multiply: Tipo de dato erroneo")

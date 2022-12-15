@@ -22,7 +22,7 @@ import uuid
 
 #  Aunque las operaciones de suma, resta, etc deberían estar implementadas
 #  en la misma clase, algunas operaciones no producen resultados, sólo
-#  manipulan el stack, que es externo, y necesitarian llamar al evaluador().
+#  manipulan el divisor, que es externo, y necesitarian llamar al evaluador().
 #  En resumen: las operaciones se implementan afuera.
 
 class GSType:
