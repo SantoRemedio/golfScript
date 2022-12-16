@@ -22,11 +22,12 @@ import re
 from tipos import Block, Var, Integer, String, colon, GSType
 from stack import Stack
 from operaciones import variables, reset_variables
+from strings import raw_string, escaped_string
 import types
 
 #   Este es el patrón oficial para reconoce golfScript
 patron = re.compile(
-    r"[a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|\"(?:\\.|[^\"])*\"?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S")
+    r"([a-zA-Z_][a-zA-Z0-9_]*|;|'(?:\\.|[^'])*'?|\"(?:\\.|[^\"])*\"?|[~@\\%\.{};+]|-?[0-9]+|#[^\n\r]*|\S)")
 
 
 #
@@ -149,10 +150,11 @@ def lexer(source):
                 #   que los encuentra.
                 #   No he logrado refactorizar esta parte para moverla
                 #   a tokenizar().
-                if parte[1:-1] == r'\n':
-                    word = String('\n')
+                if parte[0] == "'":
+                    texto = raw_string(parte[1:-1])
                 else:
-                    word = String(parte[1:-1])
+                    texto = bytes(parte[1:-1], "utf-8").decode("unicode_escape")
+                word = String(texto)
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
             elif parte[0] not in '{}':
@@ -169,7 +171,6 @@ def lexer(source):
             yield word
     yield None
 
-
 def reset():
     #
     #   Reinicia el estado para permitir la correcta
@@ -183,8 +184,8 @@ def reset():
     #   Operadores definidos en base a golfScript
     #   (mejor sería cargarlos de un archivo ...)
     #evaluar("[1 1 0] 2 base")
-    evaluar("{1$if }:and;")
+    evaluar(r"{1$if}:and;")
     evaluar(r"{1$\if }:or;")
-    evaluar(r"{\!!{!} *}:xor;")
+    evaluar(r"{\!!{!}*}:xor;")
     evaluar(r"{`puts}:p;")
-    evaluar(r"'\n':n;")
+    evaluar(r'{"\n"}:n;')

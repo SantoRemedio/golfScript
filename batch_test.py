@@ -8,6 +8,7 @@
 #
 import sys
 from evaluador import evaluar, stack, reset
+from operaciones import variables
 
 archivo = sys.argv[1]
 with open(archivo, "r") as tests:

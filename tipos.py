@@ -90,6 +90,9 @@ class Integer(GSType):
     def __str__(self):
         return str(self.name)
 
+    def __repr__(self):
+        return f'"{self.name}"'
+
     def __add__(self, other):
         suma = self.name + other.name
         return Integer(suma)
@@ -161,11 +164,13 @@ class String(GSType):
         return String(self.name + other.name)
 
     def __str__(self):
-        var = self.name.replace('"', '\\"')
+        var = self.name.replace('\n', '\\\\n')
         return f'"{var}"'
 
     def __repr__(self):
-        return f"'{self.name}'"
+        a = repr(self.name)
+        var = a.replace("'", '\\"')
+        return f'{var}'
 
     def __bool__(self):
         return self.name != ''
@@ -280,7 +285,9 @@ class Array(GSType):
         self.name.extend(lista)
 
     def pop(self):
-        return self.name.pop()
+        obj = self.name.pop()
+        obj.marked = False
+        return obj
 
     def reset(self):
         self.name = []
@@ -307,10 +314,12 @@ class Array(GSType):
         return item in self.name
 
     def __str__(self):
-        return '[' + ' '.join(str(x) for x in self.name) + ']'
+        texto = '[' + ' '.join(str(x) for x in self.name) + ']'
+        return texto
 
     def __repr__(self):
-        return str(self)
+        texto = '[' + ' '.join(repr(x) for x in self.name) + ']'
+        return texto
 
     def __xor__(self, other):
         faltantes = []

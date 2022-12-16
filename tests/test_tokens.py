@@ -5,6 +5,7 @@ import unittest
 from evaluador import reset, tokenizar, lexer
 from tipos import Var, Array, String, Block, Integer
 
+
 class TestBasico(unittest.TestCase):
     def test_parse(self):
         reset()
@@ -89,7 +90,7 @@ class TestBasico(unittest.TestCase):
     def test_str_repr(self):
         reset()
         a = String("abc")
-        self.assertEqual("'abc'", repr(a))
+        self.assertEqual(r'\"abc\"', repr(a))
 
     def test_str_str(self):
         reset()
@@ -147,3 +148,10 @@ class TestBasico(unittest.TestCase):
         source = "1 2 3"
         lista = Array([x for x in tokenizar(source)])
         print(lista)
+
+    def test_slash_n_DOBLE(self):
+        reset()
+        source = String(r'\n')
+        res = str(source)
+        print(res)
+        self.assertEqual('"\\n"', res)

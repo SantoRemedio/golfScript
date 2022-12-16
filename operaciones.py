@@ -222,8 +222,8 @@ def gs_not(stack):
 
 def gs_repr(stack):
     elemento = stack.pop()
-    a = String(str(elemento))
-    stack.append(a)
+    rep = repr(elemento)
+    stack.append(String(rep))
 
 
 def gs_greater(stack):
@@ -360,10 +360,12 @@ def gs_until(stack):
     bloque_condicion = stack.pop()
     bloque_ejecutar = stack.pop()
     while True:
+        gs_dup(stack)
+        original = stack.pop()
         evaluar(bloque_condicion)
         valor_if = stack.pop()
         if valor_if:
-            stack.append(valor_if)
+            stack.append(original)
             break
         else:
             evaluar(bloque_ejecutar)
@@ -473,44 +475,41 @@ variables = {}
 
 
 def reset_variables():
-    global variables
-
-    variables = {
-        Var('+'): gs_sum,
-        Var(';'): gs_pop,
-        Var('-'): gs_subtract,
-        Var('*'): gs_multiply,
-        Var('/'): gs_div,
-        Var('?'): gs_power,
-        Var(')'): gs_inc_1,
-        Var('('): gs_dec_1,
-        Var('~'): gs_chancho,
-        Var('.'): gs_dup,
-        Var('$'): gs_dup_n,
-        Var('\\'): gs_swap,
-        Var('@'): gs_rotate,
-        Var('%'): gs_module,
-        Var('!'): gs_not,
-        Var('`'): gs_repr,
-        Var('>'): gs_greater,
-        Var('<'): gs_less,
-        Var('='): gs_equal,
-        Var('^'): gs_bitwise_xor,
-        Var('&'): gs_bitwise_and,
-        Var(','): gs_size,
-        Var('|'): gs_or,
-        Var('['): String('['),
-        Var(']'): gs_close,
-        Var('if'): gs_if,
-        Var('do'): gs_do,
-        Var('while'): gs_while,
-        Var('until'): gs_until,
-        Var('print'): gs_print,
-        Var('random'): gs_random,
-        Var('abs'): gs_abs,
-        Var('base'): gs_base,
-        Var('zip'): gs_zip,
-    }
+    variables.clear()
+    variables[Var('+')] = gs_sum
+    variables[Var(';')] = gs_pop
+    variables[Var('-')] = gs_subtract
+    variables[Var('*')] = gs_multiply
+    variables[Var('/')] = gs_div
+    variables[Var('?')] = gs_power
+    variables[Var(')')] = gs_inc_1
+    variables[Var('(')] = gs_dec_1
+    variables[Var('~')] = gs_chancho
+    variables[Var('.')] = gs_dup
+    variables[Var('$')] = gs_dup_n
+    variables[Var('\\')] = gs_swap
+    variables[Var('@')] = gs_rotate
+    variables[Var('%')] = gs_module
+    variables[Var('!')] = gs_not
+    variables[Var('`')] = gs_repr
+    variables[Var('>')] = gs_greater
+    variables[Var('<')] = gs_less
+    variables[Var('=')] = gs_equal
+    variables[Var('^')] = gs_bitwise_xor
+    variables[Var('&')] = gs_bitwise_and
+    variables[Var(',')] = gs_size
+    variables[Var('|')] = gs_or
+    variables[Var('[')] = String('[')
+    variables[Var(']')] = gs_close
+    variables[Var('if')] = gs_if
+    variables[Var('do')] = gs_do
+    variables[Var('while')] = gs_while
+    variables[Var('until')] = gs_until
+    variables[Var('print')] = gs_print
+    variables[Var('random')] = gs_random
+    variables[Var('abs')] = gs_abs
+    variables[Var('base')] = gs_base
+    variables[Var('zip')] = gs_zip
 
 
 reset_variables()

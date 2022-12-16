@@ -1,13 +1,13 @@
 import unittest
 from evaluador import evaluar, reset
 
+
 class TestBasico(unittest.TestCase):
     def test_add(self):
         reset()
         source = "1 2+"
         resultado = evaluar(source)
         self.assertEqual("[3]", str(resultado))
-
 
     def test_concat(self):
         reset()
@@ -75,7 +75,6 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('["adfs"]', str(resultado))
 
-
     def test_rotate(self):
         reset()
         source = "1 2 3 4@"
@@ -102,13 +101,11 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual("[10 10]", str(resultado))
 
-
     def test_chancho_integer(self):
         reset()
         source = "5~"
         resultado = evaluar(source)
         self.assertEqual("[-6]", str(resultado))
-
 
     def test_chancho_string(self):
         reset()
@@ -200,7 +197,6 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('[1 -1]', str(resultado))
 
-
     def test_resta_block(self):
         reset()
         source = "[5 2 5 4 1 1][1 2]-"
@@ -245,7 +241,7 @@ class TestBasico(unittest.TestCase):
 
     def test_xor_logico_true(self):
         reset()
-        source = "0[3] xor"
+        source = "0 [3] xor"
 
         resultado = evaluar(source)
         self.assertEqual('[[3]]', str(resultado))
@@ -256,7 +252,6 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluar(source)
         self.assertEqual('[0]', str(resultado))
-
 
     def test_mult_string_string(self):
         reset()
@@ -269,7 +264,6 @@ class TestBasico(unittest.TestCase):
         source = "[1 2 3 4]{+}*"
         resultado = evaluar(source)
         self.assertEqual('[10]', str(resultado))
-
 
     def test_mult_list_block(self):
         reset()
@@ -395,7 +389,7 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "5{.}{1-.}until"
         resultado = evaluar(source)
-        #self.assertEqual('[5]', str(resultado))
+        self.assertEqual('[5]', str(resultado))
 
     def test_list_str_sum(self):
         reset()
@@ -414,12 +408,6 @@ class TestBasico(unittest.TestCase):
         source = "[50 'x']{3}+"
         resultado = evaluar(source)
         self.assertEqual("[{50 x 3}]", str(resultado))
-
-    def test_unstring(self):
-        reset()
-        source = '"1"`'
-        resultado = evaluar(source)
-        self.assertEqual('["\\"1\\""]', str(resultado))
 
     def test_array_sort(self):
         reset()
@@ -514,36 +502,92 @@ class TestBasico(unittest.TestCase):
 
     def test_zip_strings(self):
         reset()
-        source="['asdf''1234']zip"
+        source = "['asdf''1234']zip"
 
         resultado = evaluar(source)
         self.assertEqual('[["a1" "s2" "d3" "f4"]]', str(resultado))
 
     def test_zip_strings3(self):
         reset()
-        source="['abcd' 'efgh' 'klkd']zip"
+        source = "['abcd' 'efgh' 'klkd']zip"
 
         resultado = evaluar(source)
         self.assertEqual('[["aek" "bfl" "cgk" "dhd"]]', str(resultado))
 
-
     def test_zip_arrays(self):
         reset()
-        source="[[1 2 3][4 5 6][7 8 9]]zip"
+        source = "[[1 2 3][4 5 6][7 8 9]]zip"
 
         resultado = evaluar(source)
         self.assertEqual('[[[1 4 7] [2 5 8] [3 6 9]]]', str(resultado))
 
     def test_random(self):
         reset()
-        source="10rand"
+        source = "10rand"
 
         resultado = evaluar(source)
         print(resultado)
 
     def test_array_formation(self):
         reset()
-        source="1 2 [\]"
+        source = r"1 2 [\]"
 
         resultado = evaluar(source)
         self.assertEqual("[[2 1]]", str(resultado))
+
+    def test_repr2(self):
+        reset()
+        source = r'"a\nb"'
+
+        resultado = evaluar(source)
+        self.assertEqual('["a\nb"]', str(resultado))
+
+    def test_repr3(self):
+        reset()
+        source = r"[1 [2] 'asdf']`"
+
+        resultado = evaluar(source)
+        self.assertEqual(r'["[1 [2] \"asdf\"]"]', str(resultado))
+
+    def test_repr4(self):
+        reset()
+        source = r'"1"`'
+
+        resultado = evaluar(source)
+        self.assertEqual(r'["\"1\""]', str(resultado))
+
+    def test_n(self):
+        reset()
+        source = "n"
+        resultado = evaluar(source)
+        self.assertEqual('["\n"]', str(resultado))
+
+    def test_slash_n(self):
+        reset()
+        source = r"'\n'"
+        resultado = evaluar(source)
+        res = str(resultado)
+        self.assertEqual(r'["\\n"]', res)
+
+    def test_slash_n_doble(self):
+        reset()
+        source = r'"\n"'
+        resultado = evaluar(source)
+        res = str(resultado)
+        self.assertEqual(r'["\\n"]', res)
+
+    def test_int_bloque_mult(self):
+        reset()
+        source = r'1 2 3 {!}*'
+
+        resultado = evaluar(source)
+        res = str(resultado)
+        self.assertEqual("[1 0]", res)
+
+    def test_int_bloque_mult2(self):
+        reset()
+        source = r'1 2 3 4 5 {!}*'
+
+        resultado = evaluar(source)
+        res = str(resultado)
+        self.assertEqual("[1 2 3 0]", res)
