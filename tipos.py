@@ -164,8 +164,8 @@ class String(GSType):
         return String(self.name + other.name)
 
     def __str__(self):
-        var = self.name.replace('\n', '\\\\n')
-        return f'"{var}"'
+        #var = self.name.replace('\n', '\\\\n')
+        return f'"{self.name}"'
 
     def __repr__(self):
         a = repr(self.name)

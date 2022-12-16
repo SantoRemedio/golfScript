@@ -574,7 +574,7 @@ class TestBasico(unittest.TestCase):
         source = r'"\n"'
         resultado = evaluar(source)
         res = str(resultado)
-        self.assertEqual(r'["\\n"]', res)
+        self.assertEqual('["\n"]', res)
 
     def test_int_bloque_mult(self):
         reset()
@@ -591,3 +591,10 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         res = str(resultado)
         self.assertEqual("[1 2 3 0]", res)
+
+    def test_array_string_mult(self):
+        reset()
+        source = "[1 [2] [3 [4 [5]]]]'-'*"
+        resultado = evaluar(source)
+        res = str(resultado)
+        self.assertEqual("a", res)

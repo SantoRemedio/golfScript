@@ -30,6 +30,7 @@
 
 from tipos import Integer, Block, Array, String, GSType
 
+
 def gs_multiply(stack):
     from evaluador import evaluar
     top = stack.pop()
@@ -70,6 +71,10 @@ def gs_multiply(stack):
         if isinstance(sig, Integer):
             lista = top.name * int(sig)
             stack.append(Array(lista))
+        elif isinstance(sig, String):
+            car = sig.name
+            lista = car.join(str(x) for x in top.name)
+            stack.append(String(lista))
         elif isinstance(sig, Array):
             lista = []
             for x in sig:
@@ -99,5 +104,3 @@ def gs_multiply(stack):
 
     if not valido:
         raise ValueError("gs_multiply: Tipo de dato erroneo")
-
-

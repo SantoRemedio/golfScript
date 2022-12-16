@@ -66,3 +66,9 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual("[1 1]", str(resultado))
 
+    def test_pi(self):
+        reset()
+        source = r";''6666,-2%{2+.2/@*\/10.3??2*+}*`50<~\;"
+
+        resultado = evaluar(source)
+        print(resultado)

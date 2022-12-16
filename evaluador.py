@@ -153,7 +153,7 @@ def lexer(source):
                 if parte[0] == "'":
                     texto = raw_string(parte[1:-1])
                 else:
-                    texto = bytes(parte[1:-1], "utf-8").decode("unicode_escape")
+                    texto = escaped_string(parte[1:-1])
                 word = String(texto)
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))
@@ -187,5 +187,6 @@ def reset():
     evaluar(r"{1$if}:and;")
     evaluar(r"{1$\if }:or;")
     evaluar(r"{\!!{!}*}:xor;")
+    evaluar(r"{print n print}:puts;")
     evaluar(r"{`puts}:p;")
     evaluar(r'{"\n"}:n;')

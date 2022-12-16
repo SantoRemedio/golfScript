@@ -9,7 +9,7 @@ if __name__ == '__main__':
     modo_debug = False
     reset()
     
-    print("Interprete golfScript 0.1 - Dic/2022 - Candid Moe")
+    print("Interprete golfScript 0.3 - Dic/2022 - Candid Moe")
     print("Esta versión acepta el código en http://golfscript.com/golfscript/builtin.html")
     print("REPL sin historia ni editor. CTRL-C para terminar. help para ayuda")
     print("Operadores: ", list(variables.keys()))
