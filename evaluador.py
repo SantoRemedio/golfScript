@@ -46,10 +46,6 @@ def evaluar(source_code, modo_debug=False):
     #   El código puede venir como string (formato fuente)
     #   o ya tokenizado.
 
-    #   marked señala que entre este objeto y el anterior en
-    #   el stack hay un "["
-    marked = False
-
     if isinstance(source_code, str):
         source = tokenizar(source_code)
     elif hasattr(source_code, '__iter__'):
@@ -68,12 +64,8 @@ def evaluar(source_code, modo_debug=False):
             break
 
         try:
-            elemento.marked = marked
-            marked = False
             if elemento == colon:  # 1:a  Asigna el valor 1 a la variable a
                 pass  # Esperar lo que viene después
-            elif elemento == Var("["):
-                marked = True
             elif elemento_prev == colon:
                 #   elemento es el nombre de la variable.
                 variables[elemento] = stack[-1]  # Extraer valor del divisor sin modificarlo
@@ -184,9 +176,9 @@ def reset():
     #   Operadores definidos en base a golfScript
     #   (mejor sería cargarlos de un archivo ...)
 
+    evaluar(r"{\!!{!}*}:xor;")
     evaluar(r"{1$if}:and;")
     evaluar(r"{1$\if }:or;")
-    evaluar(r"{\!!{!}*}:xor;")
     evaluar(r"{print n print}:puts;")
     evaluar(r"{`puts}:p;")
     evaluar(r'{"\n"}:n;')

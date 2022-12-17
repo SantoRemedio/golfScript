@@ -59,8 +59,15 @@ def gs_multiply(stack):
         if isinstance(sig, Integer):
             stack.append(String(top.name * int(sig)))
         elif isinstance(sig, Array):
-            lista = top.name.join(str(x) for x in sig.name)
-            stack.append(String(lista))
+            lista = []
+            for elemento in sig:
+                if isinstance(elemento, Array):
+                    x = elemento.coerce(2)
+                    lista.append(x.name)
+                else:
+                    lista.append(str(elemento))
+            nvo = top.name.join(lista)
+            stack.append(String(nvo))
         elif isinstance(sig, String):
             nvo = top.name.join(sig.name)
             stack.append(String(nvo))
@@ -77,10 +84,17 @@ def gs_multiply(stack):
             stack.append(String(lista))
         elif isinstance(sig, Array):
             lista = []
+            insertar = None
             for x in sig:
-                lista.append(x)
-                lista.extend(top)
-            stack.append(Array(lista[:-1]))
+                if insertar:
+                    lista.extend(top)
+                if isinstance(x, Array):
+                    lista.extend(x)
+                else:
+                    lista.append(x)
+                insertar = True
+
+            stack.append(Array(lista))
         else:
             valido = False
 
@@ -96,7 +110,8 @@ def gs_multiply(stack):
                 evaluar(top)
         elif issubclass(type(sig), GSType):
             # Para Integer y String, aplicar el bloque.
-            evaluar(top)
+            if sig:
+                evaluar(top)
         else:
             valido = False
     else:

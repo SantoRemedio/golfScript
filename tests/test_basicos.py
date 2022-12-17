@@ -87,3 +87,38 @@ class TestBasico(unittest.TestCase):
 
         resultado = evaluar(source)
         self.assertEqual("[[1 6 7 2 6 7 3 [4 [5]]]]", str(resultado))
+
+    def test_xor(self):
+        reset()
+        source = r"10 0xor"
+
+        resultado = evaluar(source)
+        self.assertEqual("[1]", str(resultado))
+
+    def test_xor2(self):
+        reset()
+        source = r"0 10xor"
+
+        resultado = evaluar(source)
+        self.assertEqual("[10]", str(resultado))
+
+    def test_xor_both(self):
+        reset()
+        source = r"10 20xor"
+
+        resultado = evaluar(source)
+        self.assertEqual("[0]", str(resultado))
+
+    def test_xor_none(self):
+        reset()
+        source = r"0 0xor"
+
+        resultado = evaluar(source)
+        self.assertEqual("[0]", str(resultado))
+
+    def test_mult_array_string(self):
+        reset()
+        source = "[1 [2] [3 [4 [5]]]]'-'*"
+
+        resultado = evaluar(source)
+        self.assertEqual(r'["1-\x02-\x03\x04\x05"]', str(resultado))

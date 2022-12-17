@@ -34,7 +34,6 @@ class GSType:
     #   de la lista.
     def __init__(self, name):
         self.name = name
-        self.marked = False
 
     def coerse(self, precedence):
         #   Cada tipo de dato debe ser capaz de
@@ -234,6 +233,16 @@ class Array(GSType):
         self.hash = uuid.uuid1().int
         self.precedence = 1
 
+    def flatten(self):
+        #   Aplana la lista
+        lista = []
+        for elemento in self.name:
+            if isinstance(elemento, Array):
+                lista.extend(elemento.flatten())
+            else:
+                lista.append(elemento)
+        return lista
+
     def coerce(self, precedence):
         if precedence == 0:
             return self
@@ -246,10 +255,13 @@ class Array(GSType):
             # contenidos para formar un string
             #
             # [51 52 'x']'23'+ => "34x23"
+            #
+            #   Primero se aplana la lista:
             lista = []
-            for elemento in self.name:
+            for elemento in self.flatten():
                 if isinstance(elemento, Integer):
-                    lista.append(chr(int(elemento)))
+                    valor = int(elemento)
+                    lista.append(f"\\x{valor:02x}")
                 elif isinstance(elemento, String):
                     # Necesitamos el string sin editar
                     lista.append(elemento.name)
@@ -284,9 +296,11 @@ class Array(GSType):
     def extend(self, lista):
         self.name.extend(lista)
 
+    def peek(self):
+        return self.name[-1]
+
     def pop(self):
         obj = self.name.pop()
-        obj.marked = False
         return obj
 
     def reset(self):

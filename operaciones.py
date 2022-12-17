@@ -450,22 +450,13 @@ def gs_zip(stack):
 def gs_close(stack):
     #
     #     obj1 obj2 ... objn ]
-    #     ^
-    #     +--- marked == True
     #
     #   Coloca todos los objetos en un arreglo
     lista = []
-    marked = False
-    while not marked and stack.name:
-        obj = stack.pop()
-        marked = obj.marked
-        obj.marked = False
+    obj = stack.pop()
+    while obj != String("["):
         lista.append(obj)
-    #
-    #   La marca [ ya se consumio
-    #
-    if stack.name:
-        stack.name[-1].marked = False
+        obj = stack.pop()
     stack.append(Array(lista[::-1]))
 
 
