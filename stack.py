@@ -69,5 +69,8 @@ class Stack(Array):
         self.name.pop()
         return Array(lista[::-1])
 
+    def __contains__(self, item):
+        return item in self.name
+
     def __getitem__(self, item):
         raise ValueError("Acceso inválido al stack.")

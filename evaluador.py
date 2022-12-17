@@ -19,9 +19,9 @@
 
 import re
 
-from tipos import Block, Var, Integer, String, colon, GSType
+from tipos import Block, Var, Integer, String, colon, GSType, start_list
 from stack import Stack
-from operaciones import variables, reset_variables
+from operaciones import variables, reset_variables, gs_close
 from strings import raw_string, escaped_string
 import types
 
@@ -59,8 +59,13 @@ def evaluar(source_code, modo_debug=False):
             print(stack, elemento)
 
         #   Un elemento None marca el fin del código.
-        #   (se necesita así en otras parts.
         if elemento is None:
+            #   Cerrar todos los "[" que hayan quedado abiertos.
+            try:
+                while start_list in stack:
+                    gs_close(stack)
+            except IndexError:
+                pass
             break
 
         try:
@@ -128,6 +133,8 @@ def tokenizar(pgma):
             yield token
 
         word = next(source)
+
+    yield None
 
 
 def lexer(source):
