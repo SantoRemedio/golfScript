@@ -71,4 +71,19 @@ class TestBasico(unittest.TestCase):
         source = r";''6666,-2%{2+.2/@*\/10.3??2*+}*`50<~\;"
 
         resultado = evaluar(source)
+        self.assertEqual("[31415926535897932384626433832795028841971693993751]", str(resultado))
         print(resultado)
+
+    def test_until2(self):
+        reset()
+        source = r"0{.5=}{.1+}until"
+
+        resultado = evaluar(source)
+        self.assertEqual("[0 1 2 3 4 5]", str(resultado))
+
+    def test_mult_array_array(self):
+        reset()
+        source = r"[1 [2] [3 [4 [5]]]][6 7]*"
+
+        resultado = evaluar(source)
+        self.assertEqual("[[1 6 7 2 6 7 3 [4 [5]]]]", str(resultado))

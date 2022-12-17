@@ -183,7 +183,7 @@ def reset():
 
     #   Operadores definidos en base a golfScript
     #   (mejor sería cargarlos de un archivo ...)
-    #evaluar("[1 1 0] 2 base")
+
     evaluar(r"{1$if}:and;")
     evaluar(r"{1$\if }:or;")
     evaluar(r"{\!!{!}*}:xor;")

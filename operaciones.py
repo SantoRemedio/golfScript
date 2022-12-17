@@ -357,15 +357,15 @@ def gs_until(stack):
     # Si es False, reinserta valor y termina
     from evaluador import evaluar
 
-    bloque_condicion = stack.pop()
     bloque_ejecutar = stack.pop()
+    bloque_condicion = stack.pop()
     while True:
         gs_dup(stack)
         original = stack.pop()
         evaluar(bloque_condicion)
         valor_if = stack.pop()
         if valor_if:
-            stack.append(original)
+            #stack.append(original)
             break
         else:
             evaluar(bloque_ejecutar)
