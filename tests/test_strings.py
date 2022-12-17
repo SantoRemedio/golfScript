@@ -23,18 +23,6 @@ class TestBasico(unittest.TestCase):
         self.assertEqual(r"a\\tb", raw)
         self.assertEqual("a\tb", esc)
 
-    def test_integer(self):
-        source = '"1"`'
-        raw = raw_string(source)
-        esc = escaped_string(source)
-        self.assertEqual(r'"1"`', raw)
-        self.assertEqual('"1"`', esc)
-        print(repr(esc))
-
-    def test_new_line_in(self):
-        source = r'a\nb'
-        raw = raw_string(source)
-        self.assertEqual(r'a\\nb', raw)
 
     def test_integer_s(self):
         source = '"1"'
@@ -42,11 +30,12 @@ class TestBasico(unittest.TestCase):
         esc = escaped_string(source)
         self.assertEqual(r'"1"', raw)
         self.assertEqual('"1"', esc)
-        print(repr(esc))
 
     def test_new_line(self):
         source = r"\n"
+        raw = raw_string(source)
         esc = escaped_string(source)
+        self.assertEqual(r"\\n", raw)
         self.assertEqual("\n", esc)
 
     def test_num(self):

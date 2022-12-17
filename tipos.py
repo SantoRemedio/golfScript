@@ -163,8 +163,10 @@ class String(GSType):
         return String(self.name + other.name)
 
     def __str__(self):
-        #var = self.name.replace('\n', '\\\\n')
-        return f'"{self.name}"'
+        val = self.name.replace("\n", r"\n")
+        for i in range(31):
+            val = val.replace(chr(i), f"\\x{i:02x}")
+        return f'"{val}"'
 
     def __repr__(self):
         a = repr(self.name)
@@ -260,8 +262,6 @@ class Array(GSType):
             lista = []
             for elemento in self.flatten():
                 if isinstance(elemento, Integer):
-                    valor = int(elemento)
-                    #lista.append(f"\\x{valor:02x}")
                     lista.append(chr(int(elemento)))
                 elif isinstance(elemento, String):
                     # Necesitamos el string sin editar
@@ -269,7 +269,7 @@ class Array(GSType):
                 else:
                     raise ValueError(f"Error en Array.coerce(): elemento desconocido {type(elemento)}")
 
-            st = repr(''.join(lista))[1:-1]
+            st = ''.join(lista)
             return String(st)
         if precedence == 3:
             #   Convertir el array en un bloque

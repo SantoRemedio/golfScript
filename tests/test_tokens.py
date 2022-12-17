@@ -149,9 +149,3 @@ class TestBasico(unittest.TestCase):
         lista = Array([x for x in tokenizar(source)])
         print(lista)
 
-    def test_slash_n_DOBLE(self):
-        reset()
-        source = String(r'\n')
-        res = str(source)
-        print(res)
-        self.assertEqual('"\\n"', res)

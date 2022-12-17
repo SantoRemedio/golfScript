@@ -540,7 +540,7 @@ class TestBasico(unittest.TestCase):
         source = r'"a\nb"'
 
         resultado = evaluar(source)
-        self.assertEqual('["a\nb"]', str(resultado))
+        self.assertEqual(r'["a\nb"]', str(resultado))
 
     def test_repr3(self):
         reset()
@@ -560,7 +560,7 @@ class TestBasico(unittest.TestCase):
         reset()
         source = "n"
         resultado = evaluar(source)
-        self.assertEqual('["\n"]', str(resultado))
+        self.assertEqual(r'["\n"]', str(resultado))
 
     def test_slash_n(self):
         reset()
@@ -573,8 +573,7 @@ class TestBasico(unittest.TestCase):
         reset()
         source = r'"\n"'
         resultado = evaluar(source)
-        res = str(resultado)
-        self.assertEqual('["\n"]', res)
+        self.assertEqual(r'["\n"]', str(resultado))
 
     def test_int_bloque_mult(self):
         reset()
