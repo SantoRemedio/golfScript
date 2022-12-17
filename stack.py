@@ -61,12 +61,20 @@ class Stack(Array):
     def extraer(self):
         #
         #   Extrae todos los elementos desde el tope
-        #   hasta la marca "[". Los elementos se
-        #   devuelven en una lista y la marca se descarta.
+        #   hasta la marca "[" o fondo del stack. Los
+        #   elementos se devuelven en una lista y la
+        #   marca se descarta.
         lista = []
-        while self.name[-1] != start_list:
-            lista.append(self.name.pop())
-        self.name.pop()
+        try:
+            while self.name[-1] != start_list:
+                elemento = self.name.pop()
+                lista.append(elemento)
+            self.name.pop()
+        except IndexError:
+            #   No es problema si se acaba el stack
+            #   sin encontrar un "["
+            pass
+
         return Array(lista[::-1])
 
     def __contains__(self, item):

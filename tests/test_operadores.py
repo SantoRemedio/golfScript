@@ -597,3 +597,9 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         res = str(resultado)
         self.assertEqual(r'["1-\x02-\x03\x04\x05"]', res)
+
+    def test_multilinea(self):
+        reset()
+        source = "1\n2\n+"
+        resultado = evaluar(source)
+        self.assertEqual("[3]", str(resultado))

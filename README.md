@@ -1,5 +1,8 @@
-# golfScript v0.2
+# golfScript v0.9 Beta
 Implementación Python de golfScript
+
+Esta es una implementación de juguete de un interprete golfScript. Es una prueba de concepto.
+
 
 **Instalación**
 
@@ -17,11 +20,11 @@ También puede pasar scripts en la llamada:
 
 el script se ejecuta dentro del REPL.
 
+**Pruebas**
+
 **Notas**
 
-1. En golfScript las cadenas se escriben con comillas simples y se muestran con cremillas dobles.
-2. `until` no está correctamente implementado.
-3. Los strings no admiten secuencias de escape ni interpolación
+1. Los strings no admiten interpolación
 4. El REPL no tiene capacidades de edición ni historia.
 5. Incluye el interprete oficial de golfScript. Si tiene Ruby instalado, puede ejecutar `ruby golfscript.rb`.
 

@@ -158,10 +158,9 @@ def gs_chancho(stack):
 
 
 def gs_pop(stack):
+    #
     if len(stack):
         stack.pop()
-    else:
-        raise ValueError("gs_pop: Stack vacio")
 
 
 def gs_rotate(stack):
@@ -381,7 +380,7 @@ def gs_until(stack):
 
 def gs_print(stack):
     a = stack.pop()
-    print(a, end='')
+    print(a.name, end='')
 
 
 def gs_random(stack):
