@@ -8,8 +8,7 @@ import random
 from tipos import Block, String, Integer, Var, Array, cero, uno, menos_uno
 from operadores.gs_multiply import gs_multiply
 from operadores.gs_div import gs_div
-from operadores.gs_dup import gs_dup
-from operadores.gs_dup_n import gs_dup_n
+from operadores.gs_dup_n import gs_dup_n, gs_dup
 from operadores.gs_size import gs_size
 
 
@@ -169,7 +168,12 @@ def gs_rotate(stack):
     #   Rota los tres elementos al tope del divisor
     #   A B C @ -> B C A
     if len(stack) > 2:
-        stack[-1], stack[-2], stack[-3] = stack[-3], stack[-1], stack[-2]
+        c = stack.pop()
+        b = stack.pop()
+        a = stack.pop()
+        stack.push(b)
+        stack.push(c)
+        stack.push(a)
     else:
         raise ValueError("gs_rotate: divisor tiene menos de 3 elementos")
 
@@ -177,7 +181,10 @@ def gs_rotate(stack):
 def gs_swap(stack):
     #   Intercambia los dos elementos al tope del divisor
     if len(stack) > 1:
-        stack[-1], stack[-2] = stack[-2], stack[-1]
+        top = stack.pop()
+        sig = stack.pop()
+        stack.push(top)
+        stack.push(sig)
     else:
         raise ValueError("gs_swap: divisor tiene menos de dos elementos")
 
@@ -202,6 +209,7 @@ def gs_module(stack):
         lista = [String(x) for x in valor.name.split(base.name) if x]
         stack.append(Array(lista))
     elif isinstance(base, Block) and isinstance(valor, Array):
+        # Map: [1 2 3]{.}% -> [1 1 2 2 3 3]
         from evaluador import evaluar
         stack_start = len(stack.name)
         for elemento in valor.name:
@@ -452,12 +460,7 @@ def gs_close(stack):
     #     obj1 obj2 ... objn ]
     #
     #   Coloca todos los objetos en un arreglo
-    lista = []
-    obj = stack.pop()
-    while obj != String("["):
-        lista.append(obj)
-        obj = stack.pop()
-    stack.append(Array(lista[::-1]))
+    stack.append(stack.extraer())
 
 
 # El diccionario variables contiene las definiciones de

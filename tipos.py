@@ -261,14 +261,15 @@ class Array(GSType):
             for elemento in self.flatten():
                 if isinstance(elemento, Integer):
                     valor = int(elemento)
-                    lista.append(f"\\x{valor:02x}")
+                    #lista.append(f"\\x{valor:02x}")
+                    lista.append(chr(int(elemento)))
                 elif isinstance(elemento, String):
                     # Necesitamos el string sin editar
                     lista.append(elemento.name)
                 else:
                     raise ValueError(f"Error en Array.coerce(): elemento desconocido {type(elemento)}")
 
-            st = ''.join(lista)
+            st = repr(''.join(lista))[1:-1]
             return String(st)
         if precedence == 3:
             #   Convertir el array en un bloque
@@ -362,7 +363,5 @@ cero = Integer(0)
 uno = Integer(1)
 menos_uno = Integer(-1)
 colon = Var(':')
-start_block = Var('{')
-end_block = Var('}')
-start_list = Var('[')
-end_list = Var(']')
+start_list = String('[')
+end_list = String(']')

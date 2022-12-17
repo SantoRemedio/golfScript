@@ -24,7 +24,7 @@
 #
 # [1 2 3]{1+}/ -> 2 3 4
 
-from operadores.gs_dup import gs_dup
+from operadores.gs_dup_n import gs_dup
 from tipos import Integer, Block, Array, String
 
 

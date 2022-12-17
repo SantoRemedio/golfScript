@@ -597,4 +597,4 @@ class TestBasico(unittest.TestCase):
         source = "[1 [2] [3 [4 [5]]]]'-'*"
         resultado = evaluar(source)
         res = str(resultado)
-        self.assertEqual("a", res)
+        self.assertEqual(r'["1-\x02-\x03\x04\x05"]', res)

@@ -31,10 +31,10 @@ patron = re.compile(
 
 
 #
-# El divisor del script.
-# El tope del divisor está a la derecha (indice mayor).
-# En todas las representaciones del divisor, el tope estará a la derecha
-# El divisor siempre contendra exclusivamente Integer, String, Array y Block.
+# El stack del script.
+# El tope del stack está a la derecha (indice mayor).
+# En todas las representaciones del stack, el tope estará a la derecha
+# El stack siempre contendra exclusivamente Integer, String, Array y Block.
 #
 stack = Stack([])
 
@@ -68,17 +68,17 @@ def evaluar(source_code, modo_debug=False):
                 pass  # Esperar lo que viene después
             elif elemento_prev == colon:
                 #   elemento es el nombre de la variable.
-                variables[elemento] = stack[-1]  # Extraer valor del divisor sin modificarlo
+                variables[elemento] = stack.peek(0)  # Extraer valor del stack sin modificarlo
             elif elemento in variables:
                 if isinstance(variables[elemento], types.FunctionType):
                     variables[elemento](stack)  # Ejecutar un operador definido por una función
                 elif isinstance(variables[elemento], Block):
                     evaluar(variables[elemento].name)  # Ejecutar el bloque completo.
                 else:
-                    #  Colocar en el divisor el valor de la variable.
+                    #  Colocar en el stack el valor de la variable.
                     stack.append(variables[elemento])
             else:
-                #   Cualquier otra cosa, al divisor
+                #   Cualquier otra cosa, al stack
                 stack.append(elemento)
 
             elemento_prev = elemento
@@ -107,7 +107,7 @@ def tokenizar(pgma):
         if word == '{': # Inicio de un bloque
             stack_contenedores.append(Block([]))
         elif not issubclass(type(word), GSType) and word == '}':
-            #   Se termino el contenedor, que quedó al tope del divisor
+            #   Se termino el contenedor, que quedó al tope del stack
             if len(stack_contenedores) == 1:
                 #   Esta es contenedor de primer nivel
                 token = stack_contenedores.pop()
@@ -175,7 +175,7 @@ def reset():
 
     #   Operadores definidos en base a golfScript
     #   (mejor sería cargarlos de un archivo ...)
-
+    #evaluar("1 2 [\]")
     evaluar(r"{\!!{!}*}:xor;")
     evaluar(r"{1$if}:and;")
     evaluar(r"{1$\if }:or;")

@@ -13,13 +13,23 @@
 #  [5 4 3 1 2]{-1*}$ -> [5 4 3 2 1]
 from tipos import Integer, Block, Array, String
 
+def gs_dup(stack):
+    # Operator .
+    # args: 1
+    # Duplicate top of divisor.
+    #
+    # 1 2 3. -> 1 2 3 3
+
+    stack.append(stack.peek())
+
+
 def gs_dup_n(stack):
     #   Duplica en n-esimo elemento del divisor (index 0).
-    #   n se saca del divisor.
     top = stack.pop()
 
     if isinstance(top, Integer):
-        stack.append(stack[-int(top) - 1])
+        elemento = stack.peek(int(top))
+        stack.append(elemento)
     elif isinstance(top, String):
         #   Para strings, hace un sort de los caracteres.
         nvo = String(''.join(sorted(top.name)))
