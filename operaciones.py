@@ -249,6 +249,8 @@ def gs_greater(stack):
         from evaluador import tokenizar
         source = str(sig)[1:-1][int(top):]
         for elemento in tokenizar('{' + source + '}'):
+            if elemento is None:
+                break
             stack.append(elemento)
 
 
@@ -267,6 +269,8 @@ def gs_less(stack):
         from evaluador import tokenizar
         source = str(sig)[1:-1][:int(top)]
         for elemento in tokenizar('{' + source + '}'):
+            if elemento is None:
+                break
             stack.append(elemento)
 
 

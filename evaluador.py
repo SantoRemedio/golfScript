@@ -22,7 +22,6 @@ import re
 from tipos import Block, Var, Integer, String, colon, GSType, start_list
 from stack import Stack
 from operaciones import variables, reset_variables, gs_close
-from strings import raw_string, escaped_string
 import types
 
 #   Este es el patrón oficial para reconoce golfScript
@@ -150,9 +149,9 @@ def lexer(source):
                 #   No he logrado refactorizar esta parte para moverla
                 #   a tokenizar().
                 if parte[0] == "'":
-                    texto = raw_string(parte[1:-1])
+                    texto = parte[1:-1].replace(r"\'", "'")
                 else:
-                    texto = escaped_string(parte[1:-1])
+                    texto = bytes(parte[1:-1], "utf-8").decode("unicode_escape")
                 word = String(texto)
             elif parte.isdecimal() or (parte[0] in '+-' and parte[1:].isdecimal()):
                 word = Integer(int(parte))

@@ -567,7 +567,7 @@ class TestBasico(unittest.TestCase):
         source = r"'\n'"
         resultado = evaluar(source)
         res = str(resultado)
-        self.assertEqual(r'["\\n"]', res)
+        self.assertEqual(r'["\n"]', res)
 
     def test_slash_n_doble(self):
         reset()
