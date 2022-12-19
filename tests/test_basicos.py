@@ -66,23 +66,13 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual("[1 1]", str(resultado))
 
-    def test_pi(self):
-        reset()
-        source = r";''6666,-2%{2+.2/@*\/10.3??2*+}*`50<~\;"
-
-        resultado = evaluar(source)
-        self.assertEqual("[31415926535897932384626433832795028841971693993751]", str(resultado))
-        print(resultado)
-
     def test_debug_pi(self):
         reset()
-        source = r";''6666,-2% " # 2+.2/@*\/10.3??2*+}*`50<~\;"
+        source = r";''6666, -2 % {2 + .2 / @ *\ / 10.3??2 * +} *`50 < ~\;"
+        #source = r";''6666,-2%{" # 2+.2/@*\/10.3??2*+}*`50<~\;"
 
         resultado = evaluar(source)
-        resultado = evaluar("2+")
-        resultado = evaluar(".2/")
-        resultado = evaluar("@*")
-        print("a")
+        print(resultado)
 
     def test_until2(self):
         reset()

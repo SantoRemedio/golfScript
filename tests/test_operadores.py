@@ -603,3 +603,31 @@ class TestBasico(unittest.TestCase):
         source = "1\n2\n+"
         resultado = evaluar(source)
         self.assertEqual("[3]", str(resultado))
+
+    def test_equal(self):
+        reset()
+        source = "'asdf'{1234} + {asdf 1234} ="
+
+        resultado = evaluar(source)
+        self.assertEqual("[1]", str(resultado))
+
+    def test_equal2(self):
+        reset()
+        source = "[[1 2 3][4 5 6][7 8 9]]zip [[1 4 7][2 5 8][3 6 9]] ="
+
+        resultado = evaluar(source)
+        self.assertEqual("[1]", str(resultado))
+
+    def test_base(self):
+        reset()
+        source = "6 2 base"
+
+        resultado = evaluar(source)
+        self.assertEqual("[[1 1 0]]", str(resultado))
+
+    def test_repr(self):
+        reset()
+        source = r"[1 [2] 'asdf']`"
+
+        resultado = evaluar(source)
+        self.assertEqual(r'["[1 [2] \"asdf\"]"]', str(resultado))

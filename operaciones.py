@@ -422,9 +422,9 @@ def gs_base(stack):
         lista = []
         while valor >= base:
             valor, resto = divmod(valor, base)
-            lista.append(resto)
+            lista.append(Integer(resto))
         if valor:
-            lista.append(valor)
+            lista.append(Integer(valor))
         stack.append(Array(lista[::-1]))
     elif isinstance(sig, Array):
         #   Convertir una lista de factores a decimal
@@ -452,7 +452,7 @@ def gs_zip(stack):
     elif isinstance(tipo, Array):
         transpose = [a for a in zip(*matriz)]
         for sublista in transpose:
-            final.append(Array(sublista))
+            final.append(Array(list(sublista)))
     else:
         raise ValueError("Error: tipo de dato erroneo")
 

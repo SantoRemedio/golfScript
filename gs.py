@@ -15,8 +15,10 @@ if __name__ == '__main__':
     print("Operadores: ", list(variables.keys()))
 
     if len(sys.argv) == 2:
-        pgma = sys.argv[1]
-        print(f">{pgma}")
+        #pgma = sys.argv[1]
+        #print(f">{pgma}")
+        with open(sys.argv[1], "r") as inp:
+            pgma = inp.read()
     else:
         pgma = input(">")
 

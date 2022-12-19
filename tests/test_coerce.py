@@ -22,4 +22,10 @@ class TestBasico(unittest.TestCase):
         resultado = evaluar(source)
         self.assertEqual('["adfs"]', str(resultado))
 
-
+    def test_coerce_string_block(self):
+        reset()
+        source = "'abcd'"
+        resultado = evaluar(source)
+        var = resultado.pop()
+        st = var.coerce(3)
+        print(resultado)

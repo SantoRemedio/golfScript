@@ -153,7 +153,8 @@ class String(GSType):
 
     def coerce(self, precedence):
         if precedence == 3:
-            return Block([self.name])
+            #   Los strings se transforman en variables
+            return Block([Var(self.name)])
         elif precedence < 3:
             return self
 
@@ -164,7 +165,7 @@ class String(GSType):
 
     def __str__(self):
         val = self.name.replace("\n", r"\n")
-        for i in range(31):
+        for i in range(32):
             val = val.replace(chr(i), f"\\x{i:02x}")
         return f'"{val}"'
 
@@ -205,7 +206,18 @@ class Block(GSType):
         return self
 
     def append(self, elemento):
-        self.name.append(elemento)
+        if isinstance(elemento, GSType):
+            self.name.append(elemento)
+        else:
+            raise ValueError(f"Error en append: Tipo erroneo {type(elemento)}")
+
+    def __eq__(self, other):
+        if isinstance(other, Block) and len(self.name) == len(other.name):
+            iguales = all(x == y for x, y in zip(self.name, other.name))
+        else:
+            iguales = False
+        return iguales
+
 
     def __add__(self, other):
         block = self.name + other.name
@@ -260,7 +272,8 @@ class Array(GSType):
             #
             #   Primero se aplana la lista:
             lista = []
-            for elemento in self.flatten():
+            flat = self.flatten()
+            for elemento in flat:
                 if isinstance(elemento, Integer):
                     lista.append(chr(int(elemento)))
                 elif isinstance(elemento, String):
@@ -292,7 +305,7 @@ class Array(GSType):
         if issubclass(type(elemento), GSType):
             self.name.append(elemento)
         else:
-            raise ValueError("append: Tipo no valido")
+            raise ValueError(f"Error en append: Tipo erroneo {type(elemento)}")
 
     def extend(self, lista):
         self.name.extend(lista)
@@ -329,7 +342,19 @@ class Array(GSType):
         return item in self.name
 
     def __str__(self):
+        hex2car = {
+             7: "\\a",
+             8: '\\b',
+             9: '\\t',
+            10: '\\n',
+            11: '\\v',
+            12: '\\f',
+            13: '\\r',
+            chr(29): "\\e",
+            31: "\\x1F",
+        }
         texto = '[' + ' '.join(str(x) for x in self.name) + ']'
+        texto.replace(r"\x19", r"\e")
         return texto
 
     def __repr__(self):
